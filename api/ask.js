@@ -2,7 +2,9 @@
 // Uses the Claude API with web search. The API key stays on the server (ANTHROPIC_API_KEY).
 const DATA = require('./_contracts.json');
 
-const MODEL = process.env.ASK_MODEL || 'claude-sonnet-5-5';
+const GKEY = process.env.GEMINI_API_KEY;
+const GMODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+const MODEL = process.env.ANTHROPIC_API_KEY ? (process.env.ASK_MODEL || 'claude-sonnet-5-5') : GMODEL;
 const PER_IP = 20;            // questions per visitor per hour
 const PER_DAY = 400;          // questions per server instance per day
 const hits = new Map();
@@ -52,8 +54,28 @@ function parse(content) {
   return { text, sources: sources.slice(0, 5), searches };
 }
 
+async function askGemini(res, messages, body) {
+  const contents = messages.map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }));
+  const payload = {
+    systemInstruction: { parts: [{ text: system(!!body.voice, body.context) }] },
+    contents, tools: [{ google_search: {} }],
+    generationConfig: { maxOutputTokens: body.voice ? 400 : 900, temperature: 0.3 }
+  };
+  const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + GMODEL + ':generateContent', {
+    method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': GKEY }, body: JSON.stringify(payload)
+  });
+  const j = await r.json();
+  if (!r.ok) return res.status(502).json({ error: 'upstream', detail: j && j.error && j.error.message });
+  const cand = (j.candidates || [])[0] || {};
+  const text = ((cand.content && cand.content.parts) || []).map(p => p.text || '').join('').trim();
+  const gm = cand.groundingMetadata || {};
+  const seen = new Set(), sources = [];
+  for (const c of (gm.groundingChunks || [])) if (c.web && c.web.uri && !seen.has(c.web.uri)) { seen.add(c.web.uri); sources.push({ title: c.web.title || c.web.uri, url: c.web.uri }); }
+  res.status(200).json({ text: text || "I couldn't find a clear answer to that. Try asking about a contract, a supplier type, or today's prices.", sources: sources.slice(0, 5), searches: gm.webSearchQueries || [] });
+}
+
 module.exports = async (req, res) => {
-  const key = process.env.ANTHROPIC_API_KEY;
+  const key = process.env.ANTHROPIC_API_KEY || GKEY;
   if (req.method === 'GET') return res.status(200).json({ ready: !!key, model: MODEL });
   if (req.method !== 'POST') return res.status(405).json({ error: 'Use POST' });
   if (!key) return res.status(503).json({ error: 'not_configured' });
@@ -75,6 +97,10 @@ module.exports = async (req, res) => {
   if (messages.length && messages[messages.length - 1].role === 'user') messages.pop();
   messages.push({ role: 'user', content: question });
 
+  if (!process.env.ANTHROPIC_API_KEY) {
+    try { return await askGemini(res, messages, body); }
+    catch (e) { return res.status(502).json({ error: 'failed', detail: String(e.message || e) }); }
+  }
   const payload = {
     model: MODEL, max_tokens: body.voice ? 400 : 900, system: system(!!body.voice, body.context), messages,
     tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3, user_location: { type: 'approximate', city: 'Mumbai', region: 'Maharashtra', country: 'IN', timezone: 'Asia/Kolkata' } }]
