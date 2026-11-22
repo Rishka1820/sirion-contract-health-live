@@ -189,8 +189,8 @@ function renderStory() {
         <p class="lead rise" style="animation-delay:.2s">Every morning it rereads each signed supplier contract, checks it against invoices, usage, prices and service levels, and tells the right person what to fix before the deadline passes.</p>
         <div class="rise ctas" style="animation-delay:.3s;display:flex;gap:12px;margin-top:30px;flex-wrap:wrap"><a class="btn primary big" href="#signin">Open the live product <span class="arr">→</span></a><a class="btn outline big" href="#sec-video">Watch the 90-second video <span class="arr">→</span></a></div>
         <div class="rise heroframe" style="animation-delay:.45s"><div class="hf-in">
-          <div class="hf-cell"><span>Example persona</span><b>A company like Asian Paints</b></div>
-          <div class="hf-cell"><span>Service suppliers in scope</span><b class="num">2,500</b><em>of 30,000+</em></div>
+          <div class="hf-cell"><span>Demo company</span><b>Asian Paints</b><em>illustrative</em></div>
+          <div class="hf-cell"><span>Service suppliers in scope</span><b class="num">2,500</b><em>in scope</em></div>
           <div class="hf-cell"><span>Found at stake each year</span><b class="num">₹6.8 Cr</b><em>illustrative</em></div>
           <div class="hf-cell"><span>Need action today</span><b class="num">69</b><em>contracts</em></div>
         </div></div>
@@ -215,15 +215,15 @@ function renderStory() {
         <div class="reason"><h3>Every gap is a fact you can check</h3><p>The contract is signed, so what it says is fixed. Comparing it with invoices and usage shows a clear gap, not an opinion. Intake and negotiation can't offer that.</p></div>
       </div>
       <div class="whyap">
-        <div class="wa-l"><span class="tpill">Who it's for</span><h3>Built for any company that buys from thousands of suppliers and has no contract tool.</h3>
-          <p>The brief describes about 3,000 employees and 2,500 service suppliers, with no contract management system. Asian Paints is the example persona in this demo, a stand-in for that kind of company. We are not building for one customer, and nothing here depends on the industry. Day one is small: load the contracts renewing in the next 90 days, have a person check the terms Sirion's Extraction Agent reads, and match them to invoices already in the ERP and to market rates such as diesel and inflation.</p></div>
+        <div class="wa-l"><span class="tpill">The customer</span><h3>Large companies that buy from thousands of suppliers and manage contracts by hand.</h3>
+          <p>Think of a manufacturer with about 3,000 employees and 2,500 service suppliers: logistics, staffing, facilities, IT. Contracts sit in email and shared drives, and nobody owns the renewal calendar. The demo follows Procurement at a company like Asian Paints, but nothing in the product depends on the industry. Day one is small. Sirion's Extraction Agent reads the contracts renewing in the next 90 days, a person confirms the terms once, and Contract health compares them with invoices already in the ERP and with market rates such as diesel and inflation.</p></div>
         <div class="wa-r">
           <div><b class="num">3,000</b><span>employees</span></div>
           <div><b class="num">2,500</b><span>service suppliers in scope</span></div>
           <div><b>None</b><span>contract tool today</span></div>
         </div>
       </div>
-      <div class="note" style="margin-top:16px;max-width:860px">Going deep, not broad: the first release does one job. It catches supplier contracts that are about to renew on their own, compares what you pay for with what people use, and gets the change approved before the notice deadline. Everything else waits on the roadmap.</div>
+      <div class="note" style="margin-top:16px;max-width:860px">The first release does one job well. It catches supplier contracts that are billed above their agreed or market rate, or are about to renew on their own, and gets a fix approved before the notice deadline. Everything else is on the roadmap.</div>
     </div></section>
 
     <section class="sec" id="sec-who"><div class="story-wrap">
@@ -245,7 +245,7 @@ function renderStory() {
       <div class="grid2" style="margin-top:12px;align-items:start">
         <div class="card" style="padding:14px 14px 6px"><div style="font-weight:600;font-size:14px">Money at stake vs how reliably we can catch it</div><div class="muted" style="font-size:12.5px">Bigger circle: happens more often</div><div id="prioChart" style="height:300px" role="img" aria-label="Chart of six kinds of drift. Auto-renewals and billing above agreed rates are high money and easy to catch. Prices above market with no clause are hard to catch."></div></div>
         <div class="card" style="overflow:hidden"><table class="t"><thead><tr><th>Kind of drift</th><th>Money a year</th><th>Catch it reliably?</th><th>Priority</th></tr></thead><tbody>
-          ${[['Auto-renewals at a higher price, or for more than is used', '₹2.6 Cr', 'Yes: dates and usage', 'First release', 'green'], ['Billed above agreed rates', '₹1.9 Cr', 'Yes: invoice vs rate card', 'Next', 'amber'], ['Price links not applied (fuel, raw materials)', '₹1.0 Cr', 'Yes: named index', 'Next', 'amber'], ['Rises above a price cap', '₹0.8 Cr', 'Yes: named index', 'Next', 'amber'], ['Missed service levels', '₹0.5 Cr', 'Partly: needs delivery data', 'Later', 'grey'], ['Above market, no clause to point to', 'Not counted', 'Hard: needs benchmarks', 'Later', 'grey']].map(r => `<tr style="cursor:default"><td>${r[0]}</td><td class="num">${r[1]}</td><td class="muted">${r[2]}</td><td><span class="pill ${r[4]}">${r[3]}</span></td></tr>`).join('')}
+          ${[['Auto-renewals and rate resets before the notice deadline', '₹2.6 Cr', 'Yes: dates and terms in the contract', 'First release', 'green'], ['Billed above agreed rates', '₹1.9 Cr', 'Yes: invoice vs rate card', 'Next', 'amber'], ['Price links not applied (fuel, raw materials)', '₹1.0 Cr', 'Yes: named index', 'Next', 'amber'], ['Rises above a price cap', '₹0.8 Cr', 'Yes: named index', 'Next', 'amber'], ['Missed service levels', '₹0.5 Cr', 'Partly: needs delivery data', 'Later', 'grey'], ['Above market, no clause to point to', 'Not counted', 'Hard: needs benchmarks', 'Later', 'grey']].map(r => `<tr style="cursor:default"><td>${r[0]}</td><td class="num">${r[1]}</td><td class="muted">${r[2]}</td><td><span class="pill ${r[4]}">${r[3]}</span></td></tr>`).join('')}
         </tbody></table></div>
       </div>
     </div></section>
@@ -254,13 +254,13 @@ function renderStory() {
       ${secHead('sec-solve', 'The fix', 'The problem and the solution, in depth', '')}
       <h3 class="h3" style="margin-top:4px">The problem</h3>
       <p class="quote">A supplier's fuel charge stays at last year's rate while diesel gets cheaper, and the contract renews by itself in 13 days. Nobody notices until the invoice arrives.</p>
-      <p class="body">Supplier contracts drift quietly. Prices and terms are fixed on the day of signing, while market rates, usage and invoices keep moving. The notice window is short, the person who signed has often moved on, and nobody compares the invoice with the contract. For a company with 2,500 suppliers and no contract tool, that gap adds up to crores a year. The first release fixes one slice: supplier contracts that are billed above the contract or market rate, or that are about to renew on their own. Software licences are an add-on, since they need usage data a company may not share.</p>
+      <p class="body">A supplier contract is priced on the day it is signed, but market rates and invoices keep moving. Notice windows are short, the person who signed has often moved on, and nobody checks the invoice against the contract. Across 2,500 suppliers this adds up to crores a year in overcharges and renewals nobody chose. Contract health closes that gap. Each morning it compares every contract with what the supplier bills and what the market does, and gives the right person one clear action. Software licences come later as an add-on, because they need usage data that companies don't always share.</p>
       <div class="lightcard evcard"><div class="ev-h"><h3>Independent research says the same</h3><p class="muted">Money leaks after signing, in every industry. These show the problem is real in general. The figures inside the product are made up, so they illustrate it and don't prove it for any one client.</p></div><div class="ev-g">${ev.map(e => `<div class="ev"><b class="num">${e.big}</b><p>${e.t}</p><a href="${e.u}" target="_blank" rel="noopener">${e.s} ↗</a></div>`).join('')}</div></div>
       <h3 class="h3">The solution, in five steps</h3>
       <div class="tiles" id="tiles" role="tablist" aria-label="The five steps">${STEPS.map((x, i) => `<button class="tile${i === 0 ? ' on' : ''}" role="tab" aria-selected="${i === 0}" data-i="${i}"><span class="tb">${I[x.ico] || I.doc}</span>${x.name}<span class="dot"></span></button>`).join('')}</div>
       <div class="tilepanel" id="tilepanel"></div>
       <div class="note" style="margin-top:16px;max-width:860px"><b style="color:#fff">What it never does:</b> send anything to a supplier on its own. It reads, compares, explains and drafts. People decide.</div>
-      <div class="note" style="margin-top:10px;max-width:860px"><b style="color:#fff">Assumptions:</b> every supplier, person and number in the product is made up. The client has no contract system, as in the brief, so the product starts with the contracts renewing in the next 90 days. Sirion's Extraction Agent reads them from email and shared drives, and a person checks the terms once. Invoices come from the ERP (SAP S/4HANA here), and usage comes from IT's admin reports. News, diesel and inflation feeds are live.</div>
+      <div class="note" style="margin-top:10px;max-width:860px"><b style="color:#fff">About the demo:</b> suppliers, people and amounts are made up. Contracts start from the next 90 days of renewals. Invoices come from the ERP (SAP S/4HANA here). News, diesel and inflation feeds are live.</div>
     </div></section>
 
     <section class="sec" id="sec-right"><div class="story-wrap">
@@ -285,8 +285,8 @@ function renderStory() {
     <section class="sec" id="sec-future"><div class="story-wrap">
       ${secHead('sec-future', 'The road ahead', 'What does the future look like?', '')}
       <div class="roadmap">
-        <div class="rm"><div class="rk">Now <span class="muted">this prototype</span></div><ul><li>Auto-renewals checked every morning against usage</li><li>One renewal walked through five people, including a no-reply and a different seat count</li><li>AskSirion by typing or voice, with live headlines</li><li>Live news, diesel and inflation feeds</li><li>Found, secured and confirmed kept apart</li></ul></div>
-        <div class="rm"><div class="rk">Next <span class="muted">3 to 6 months</span></div><ul><li>Pull software usage straight from sign-in logs</li><li>Live supplier portal for replies and credit notes</li><li>Alerts in Teams, Slack and email</li><li>Next checks: billing above rate cards, price links like fuel, rises above a cap</li></ul></div>
+        <div class="rm"><div class="rk">Now <span class="muted">this prototype</span></div><ul><li>Supplier contracts checked every morning against invoices and market rates</li><li>One overcharge and renewal walked through every person, including a supplier that doesn't reply</li><li>AskSirion by typing or voice, with live headlines</li><li>Live news, diesel and inflation feeds</li><li>Found, secured and confirmed kept apart</li></ul></div>
+        <div class="rm"><div class="rk">Next <span class="muted">3 to 6 months</span></div><ul><li>Software contracts as an add-on, with usage from sign-in logs where a company allows it</li><li>Live supplier portal for replies and credit notes</li><li>Alerts in Teams, Slack and email</li><li>Next checks: billing above rate cards, price links like fuel, rises above a cap</li></ul></div>
         <div class="rm"><div class="rk">Later <span class="muted">6 to 18 months</span></div><ul><li>Stop drift at the source: suggest price caps and price links during negotiation</li><li>Fair-price benchmarks across Sirion customers, kept anonymous</li><li>Routine claims run end to end, with one approval</li></ul></div>
       </div>
     </div></section>
