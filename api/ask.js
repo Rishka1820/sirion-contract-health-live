@@ -3,7 +3,7 @@
 const DATA = require('./_contracts.json');
 
 const GKEY = process.env.GEMINI_API_KEY;
-const GMODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+const GMODEL = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
 const MODEL = process.env.ANTHROPIC_API_KEY ? (process.env.ASK_MODEL || 'claude-sonnet-5-5') : GMODEL;
 const PER_IP = 20;            // questions per visitor per hour
 const PER_DAY = 400;          // questions per server instance per day
