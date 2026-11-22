@@ -461,8 +461,8 @@ function renderSignin() {
       <div style="width:min(380px,100%)">
         <h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.02em">Sign in</h1>
         <p style="margin:6px 0 24px;color:#4D565D">Want to look around? Use the demo. No account needed.</p>
-        <button class="btn primary w100" id="demoIn">Try the demo as Priya</button>
-        <p style="margin:8px 0 0;font-size:12.5px;color:#6B7479">Priya Sharma, procurement manager at Asian Paints. You can switch to other people inside.</p>
+        <button class="btn primary w100" id="demoIn">Continue with demo account</button>
+        <p style="margin:8px 0 0;font-size:12.5px;color:#6B7479">Opens a sample workspace with example contracts and suppliers.</p>
         <div style="display:flex;align-items:center;gap:12px;margin:26px 0 20px;font-size:12.5px;color:#6B7479"><span style="flex:1;height:1px;background:#E3E9EA"></span>or sign in to your company<span style="flex:1;height:1px;background:#E3E9EA"></span></div>
         <button class="btn w100" id="ssoIn" style="background:#fff;border:1px solid #D3DCDD;color:var(--ink)">Continue with company single sign-on</button>
         <form id="mailIn" style="margin-top:14px">
@@ -475,7 +475,7 @@ function renderSignin() {
   </div>`;
   $('#demoIn').onclick = () => { S.role = 'procurement'; go('overview'); };
   $('#ssoIn').onclick = () => toast('Single sign-on is not set up in this demo. Use the demo button.');
-  $('#mailIn').onsubmit = (e) => { e.preventDefault(); $('#mailMsg').textContent = 'This demo does not send email. Use "Try the demo as Priya" above.'; };
+  $('#mailIn').onsubmit = (e) => { e.preventDefault(); $('#mailMsg').textContent = 'This demo does not send email. Use "Continue with demo account" above.'; };
 }
 
 /* ---------------- app shell ---------------- */
@@ -498,7 +498,7 @@ function shell(active, centerHTML) {
         <button id="navTour">${I.help}Take the tour</button>
         <a href="#walkthrough">${I.play}Play walkthrough</a>
       </nav>
-      <div style="display:flex;align-items:center;gap:10px;padding:12px 8px 4px;border-top:1px solid rgba(180,205,208,0.10)"><span class="av" style="width:30px;height:30px;background:${p.color}">${p.initials}</span><div style="line-height:1.2"><div style="font-size:13px">${p.name}</div><div style="font-size:11.5px;color:var(--text-3)">${p.role}</div></div></div>
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 8px 4px;border-top:1px solid rgba(180,205,208,0.10)"><span class="av" style="width:30px;height:30px;background:${p.color}">${p.initials}</span><div style="line-height:1.2"><div style="font-size:13px">${p.name}</div><div style="font-size:11.5px;color:var(--text-3)">${p.name.toLowerCase().replace(/[^a-z ]/g, '').trim().replace(/ +/g, '.')}@company.com</div></div></div>
     </aside>
     <div class="center">
       ${active === 'overview' && S.heroSeen && S.banner ? annc() : ''}
