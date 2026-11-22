@@ -538,7 +538,7 @@ a.srcchip{text-decoration:none;color:var(--mist)}a.srcchip:hover{color:#fff}
 @media (max-width:1240px){.shell.ask-closed{grid-template-columns:minmax(0,1fr)}}
 
 .search{margin-left:0;width:340px}
-.viewas{margin-left:auto}
+.viewas{margin-left:0}
 .viewas > button.acct{padding:0;border:0;background:transparent;height:auto;border-radius:50%}
 .viewas > button.acct:hover .av{box-shadow:0 0 0 2px rgba(159,211,216,0.45)}
 

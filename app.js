@@ -504,7 +504,8 @@ function shell(active, centerHTML) {
       ${active === 'overview' && S.heroSeen && S.banner ? annc() : ''}
       <header class="topbar">
         <label class="search">${I.search}<span class="sr">Search contracts</span><input type="search" placeholder="Search contracts and suppliers" id="searchBox"></label>
-        <div class="viewas"><button id="viewAsBtn" class="acct" aria-haspopup="menu" aria-expanded="${S.menu}" aria-label="Account: ${p.name}" title="${p.name}"><span class="av" style="background:${p.color};width:32px;height:32px">${p.initials}</span></button>${S.menu ? viewAsMenu() : ''}</div>
+        <button class="btn outline" id="topTour" style="margin-left:auto;height:34px">Take the tour</button>
+        <div class="viewas" style="margin-left:12px"><button id="viewAsBtn" class="acct" aria-haspopup="menu" aria-expanded="${S.menu}" aria-label="Account: ${p.name}" title="${p.name}"><span class="av" style="background:${p.color};width:32px;height:32px">${p.initials}</span></button>${S.menu ? viewAsMenu() : ''}</div>
       </header>
       ${centerHTML}
     </div>
@@ -597,7 +598,7 @@ function renderOverview() {
   const center = `<main class="main" id="main">
     ${!S.heroSeen ? launchHero() : ''}
     ${inboxCard()}
-    <div class="page-head"><div><h1>Overview</h1><div class="muted" style="font-size:13px;margin-top:2px">How your 2,500 supplier contracts compare with invoices, usage and today's prices. Checked at 9:00 this morning.</div></div>
+    <div class="page-head"><div><h1>Overview</h1><div class="muted" style="font-size:13px;margin-top:2px">How your 2,500 supplier contracts compare with invoices and today's market prices. Checked at 9:00 this morning.</div></div>
       <div style="margin-left:auto;display:flex;gap:8px"><button class="btn ghost" id="exportBtn">Export</button></div></div>
 
     <section class="card metrics" id="nums" aria-label="Key numbers">
@@ -644,6 +645,7 @@ function renderOverview() {
   </main>`;
   $('#root').innerHTML = shell('overview', center);
   wireShell();
+  if (!store.get('tourSeen', false) && !(S.walk >= 0) && tourI < 0) { store.set('tourSeen', true); setTimeout(() => { if (location.hash.slice(1) === 'overview' || !location.hash) startTour(); }, 900); }
   wireMarketWatch();
   const mo = $('#more'); if (mo) mo.ontoggle = () => { if (mo.open && !mo.dataset.d) { mo.dataset.d = 1; overviewChart($('#ovChart')); categoryChart($('#catChart')); } };
   $$('[data-cm]').forEach(b => b.onclick = () => { S.chartMode = b.dataset.cm; disposeCharts(); S.openMore = true; renderApp(); });
@@ -1116,11 +1118,7 @@ function runVoice() {
     a.innerHTML = `<span class="unsaid">${esc(said)}</span>`;
     let spoke = false;
     try {
-      const u = new SpeechSynthesisUtterance(said); u.rate = 1.02; u.pitch = 1;
-      const v = speechSynthesis.getVoices().find(x => /en-IN/i.test(x.lang)) || speechSynthesis.getVoices().find(x => /^en/i.test(x.lang)); if (v) u.voice = v;
-      u.onboundary = (e) => { if (e.name && e.name !== 'word') return; const upto = said.slice(0, e.charIndex + (e.charLength || 0)); a.innerHTML = `<span class="said">${esc(upto)}</span><span class="unsaid">${esc(said.slice(upto.length))}</span>`; spoke = true; };
-      u.onend = () => { a.innerHTML = `<span class="said">${esc(said)}</span>`; st.textContent = 'Done'; orb.classList.remove('talking'); wv.classList.add('idle'); };
-      speechSynthesis.speak(u);
+      spoke = speak(said, (n) => { a.innerHTML = `<span class="said">${esc(said.slice(0, n))}</span><span class="unsaid">${esc(said.slice(n))}</span>`; }, () => { a.innerHTML = `<span class="said">${esc(said)}</span>`; st.textContent = 'Done'; orb.classList.remove('talking'); wv.classList.add('idle'); });
     } catch (e) {}
     // caption fallback if the browser can't speak or doesn't report word timings
     ws.forEach((w, i) => vTimers.push(setTimeout(() => { if (spoke) return; const upto = ws.slice(0, i + 1).join(' '); a.innerHTML = `<span class="said">${esc(upto)}</span><span class="unsaid">${esc(said.slice(upto.length))}</span>`; if (i === ws.length - 1) { st.textContent = 'Done'; orb.classList.remove('talking'); wv.classList.add('idle'); } }, i * 320)));
@@ -1131,7 +1129,6 @@ function runVoice() {
 const TOUR = [
   ['#ask-panel', 'Ask anything, or just talk', 'AskSirion has read every contract and gives you a short brief each morning. Type a question, or tap the orb and speak.', 'left'],
   ['#nums', 'Your four numbers', 'How much extra you paid this month, what you can still save, how many contracts need fixing, and what Finance has confirmed.', 'below'],
-  ['#chart-card', 'Watch the gap grow', 'Each bar is the extra you paid that month. The striped bars show what you will keep paying if nothing changes.', 'below'],
   ['#todo', 'Start here every week', 'Each row says what is wrong and the one thing to do. Nothing goes to a supplier until you approve it.', 'above']
 ];
 let tourI = -1;
@@ -1158,6 +1155,7 @@ function showTour() {
   tip.style.left = x + 'px'; tip.style.top = y + 'px';
   const n = $('#tNext'), b = $('#tBack'), s = $('#tSkip');
   n.onclick = () => { tourI++; showTour(); }; if (b) b.onclick = () => { tourI--; showTour(); }; if (s) s.onclick = () => endTour();
+  const sk = document.createElement('button'); sk.textContent = 'Skip tour'; sk.setAttribute('style', 'position:absolute;top:10px;right:12px;background:transparent;border:0;color:#5C6B70;font-size:12px;cursor:pointer'); sk.onclick = () => endTour(); if (tourI > 0) tip.appendChild(sk);
   n.focus();
 }
 
@@ -1223,6 +1221,7 @@ function wireShell() {
   wireRoleSet();
   const va = $('#viewAsBtn'); if (va) va.onclick = (e) => { e.stopPropagation(); S.menu = !S.menu; disposeCharts(); renderApp(); };
   $$('.menu [data-role]').forEach(b => b.onclick = () => { S.role = b.dataset.role; S.menu = false; toast('Now viewing as ' + PEOPLE[S.role].name + '.'); if (S.role === 'supplier') return renderSupplier(); disposeCharts(); renderApp(); });
+  const tt = $('#topTour'); if (tt) tt.onclick = () => startTour();
   const nt = $('#navTour'), nn = $('#navNew');
   if (nt) nt.onclick = () => startTour();
   if (nn) nn.onclick = () => { S.heroSeen = false; if (location.hash.slice(1) !== 'overview') go('overview'); else { disposeCharts(); renderApp(); } };
