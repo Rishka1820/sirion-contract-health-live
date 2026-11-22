@@ -169,8 +169,6 @@ function renderStory() {
   const ev = [
     { big: '~9%', t: 'of a business\'s yearly value is lost through poor contract management, on average. The best lose about 3%.', s: 'World Commerce & Contracting, 2025', u: 'https://info.worldcc.com/contract-management-aug-2025' },
     { big: '11%', t: 'of contract value is lost on average once deals move into delivery, after signing.', s: 'WorldCC with Ironclad, via Digital Journal', u: 'https://www.digitaljournal.com/business/contracts-signed-value-lost-how-businesses-are-leaking-11-of-spend/article' },
-    { big: '$19.8M', t: 'a year is wasted on unused software licences by the average organisation.', s: 'Zylo SaaS Management Index 2026', u: 'https://zylo.com/blog/how-much-wasted-on-saas-spend' },
-    { big: '62%', t: 'of software licences are unused or underused, as of Q3 2026.', s: 'Vertice', u: 'https://www.vertice.one/insights/unused-saas-applications' },
     { big: 'up to 8%', t: 'of freight spend is won back by freight bill audits, from wrong charges.', s: 'Modern Materials Handling', u: 'https://www.mmh.com/article/average_savings_found_after_a_freight_bill_audit/cerasis' },
     { big: '2–4%', t: 'of audited spend is usually won back by recovery audits, and 10–20% on some supplier contracts.', s: 'SC&H Group', u: 'https://www.schgroup.com/?p=65367' }
   ];
@@ -191,7 +189,7 @@ function renderStory() {
         <p class="lead rise" style="animation-delay:.2s">Every morning it rereads each signed supplier contract, checks it against invoices, usage, prices and service levels, and tells the right person what to fix before the deadline passes.</p>
         <div class="rise ctas" style="animation-delay:.3s;display:flex;gap:12px;margin-top:30px;flex-wrap:wrap"><a class="btn primary big" href="#signin">Open the live product <span class="arr">→</span></a><a class="btn outline big" href="#sec-video">Watch the 90-second video <span class="arr">→</span></a></div>
         <div class="rise heroframe" style="animation-delay:.45s"><div class="hf-in">
-          <div class="hf-cell"><span>Sirion customer</span><b>Asian Paints</b></div>
+          <div class="hf-cell"><span>Example persona</span><b>A company like Asian Paints</b></div>
           <div class="hf-cell"><span>Service suppliers in scope</span><b class="num">2,500</b><em>of 30,000+</em></div>
           <div class="hf-cell"><span>Found at stake each year</span><b class="num">₹6.8 Cr</b><em>illustrative</em></div>
           <div class="hf-cell"><span>Need action today</span><b class="num">69</b><em>contracts</em></div>
@@ -217,13 +215,12 @@ function renderStory() {
         <div class="reason"><h3>Every gap is a fact you can check</h3><p>The contract is signed, so what it says is fixed. Comparing it with invoices and usage shows a clear gap, not an opinion. Intake and negotiation can't offer that.</p></div>
       </div>
       <div class="whyap">
-        <div class="wa-l"><span class="tpill">The client</span><h3>The brief's company has no contract tool. Asian Paints is the stand-in.</h3>
-          <p>The brief describes about 3,000 employees and 2,500 service suppliers, with no contract management system. I used Asian Paints as a realistic name and scale. Day one is small: load only the contracts renewing in the next 90 days, have a person check the terms Sirion's Extraction Agent reads, and get usage reports from IT. Invoices and orders already live in the ERP, so they don't need a contract tool.</p>
-          <a href="https://static.asianpaints.com/content/dam/annual-report-2526/pdf/Value-Creation-Model.pdf" target="_blank" rel="noopener">Asian Paints Annual Report 2025-26 and BRSR ↗</a></div>
+        <div class="wa-l"><span class="tpill">Who it's for</span><h3>Built for any company that buys from thousands of suppliers and has no contract tool.</h3>
+          <p>The brief describes about 3,000 employees and 2,500 service suppliers, with no contract management system. Asian Paints is the example persona in this demo, a stand-in for that kind of company. We are not building for one customer, and nothing here depends on the industry. Day one is small: load the contracts renewing in the next 90 days, have a person check the terms Sirion's Extraction Agent reads, and match them to invoices already in the ERP and to market rates such as diesel and inflation.</p></div>
         <div class="wa-r">
-          <div><b>#1</b><span>paint company in India</span></div>
-          <div><b class="num">13</b><span>plants in India, plus 250+ offices, warehouses and distribution centres</span></div>
-          <div><b class="num">2,500</b><span>service suppliers in scope, from the brief</span></div>
+          <div><b class="num">3,000</b><span>employees</span></div>
+          <div><b class="num">2,500</b><span>service suppliers in scope</span></div>
+          <div><b>None</b><span>contract tool today</span></div>
         </div>
       </div>
       <div class="note" style="margin-top:16px;max-width:860px">Going deep, not broad: the first release does one job. It catches supplier contracts that are about to renew on their own, compares what you pay for with what people use, and gets the change approved before the notice deadline. Everything else waits on the roadmap.</div>
@@ -256,8 +253,8 @@ function renderStory() {
     <section class="sec" id="sec-solve"><div class="story-wrap">
       ${secHead('sec-solve', 'The fix', 'The problem and the solution, in depth', '')}
       <h3 class="h3" style="margin-top:4px">The problem</h3>
-      <p class="quote">Zenvault renews on its own on 1 January at 7% more. Only 1,240 of the 2,000 seats are used. Nobody will notice until the invoice arrives.</p>
-      <p class="body">Auto-renewals are quiet. The notice window is 30 days, the person who signed has moved on, and nobody checks usage. In this example, renewals that rise in price or keep unused seats cost about ₹2.6 Cr a year, and Zenvault alone is most of it. Other kinds of drift, like fuel charges and staffing rates, are on the roadmap.</p>
+      <p class="quote">A supplier's fuel charge stays at last year's rate while diesel gets cheaper, and the contract renews by itself in 13 days. Nobody notices until the invoice arrives.</p>
+      <p class="body">Supplier contracts drift quietly. Prices and terms are fixed on the day of signing, while market rates, usage and invoices keep moving. The notice window is short, the person who signed has often moved on, and nobody compares the invoice with the contract. For a company with 2,500 suppliers and no contract tool, that gap adds up to crores a year. The first release fixes one slice: supplier contracts that are billed above the contract or market rate, or that are about to renew on their own. Software licences are an add-on, since they need usage data a company may not share.</p>
       <div class="lightcard evcard"><div class="ev-h"><h3>Independent research says the same</h3><p class="muted">Money leaks after signing, in every industry. These show the problem is real in general. The figures inside the product are made up, so they illustrate it and don't prove it for any one client.</p></div><div class="ev-g">${ev.map(e => `<div class="ev"><b class="num">${e.big}</b><p>${e.t}</p><a href="${e.u}" target="_blank" rel="noopener">${e.s} ↗</a></div>`).join('')}</div></div>
       <h3 class="h3">The solution, in five steps</h3>
       <div class="tiles" id="tiles" role="tablist" aria-label="The five steps">${STEPS.map((x, i) => `<button class="tile${i === 0 ? ' on' : ''}" role="tab" aria-selected="${i === 0}" data-i="${i}"><span class="tb">${I[x.ico] || I.doc}</span>${x.name}<span class="dot"></span></button>`).join('')}</div>
@@ -346,7 +343,7 @@ function renderStory() {
       <a class="btn primary big" href="#signin">Open the live product <span class="arr">→</span></a>
     </div></section>
 
-    <footer class="story-foot"><div class="story-wrap">Illustrative data for a case study. Asian Paints is a Sirion customer used as the example; suppliers, people and numbers are made up. Built by Rishika Srivastava for the Sirion case assessment.</div></footer>
+    <footer class="story-foot"><div class="story-wrap">Illustrative data for a case study. A company like Asian Paints is used as an example persona; suppliers, people and numbers are made up. Built by Rishika Srivastava for the Sirion case assessment.</div></footer>
   </div>`;
   renderStakeMap('procurement');
   prioChart($('#prioChart'));
@@ -962,7 +959,7 @@ function renderIntegrations() {
   const center = `<main class="main">
     <div class="page-head"><div><h1>Integrations</h1><div class="muted" style="font-size:13px;margin-top:2px">Where Contract health gets its information, and where it sends actions back.</div></div></div>
     <section class="card" style="padding:18px 20px">
-      <h2 class="h">How the information moves</h2><div class="sub">Contracts and approvals stay in Sirion. Invoices come from SAP S/4HANA and supplier details from SAP Ariba, both already connected for Asian Paints. Prices, diesel, inflation and software usage come from outside feeds.</div>
+      <h2 class="h">How the information moves</h2><div class="sub">Contracts and approvals stay in Sirion. Invoices come from SAP S/4HANA and supplier details from SAP Ariba, both already connected for the company. Prices, diesel, inflation and software usage come from outside feeds.</div>
       <svg viewBox="0 0 1120 190" role="img" aria-label="Sirion repository and outside feeds go into the daily check, which feeds AskSirion and the to-do list, and actions go back into Sirion workflows" style="display:block;width:100%;height:auto;margin-top:14px">
         <g font-family="Hanken Grotesk, system-ui, sans-serif">
           <rect x="10" y="20" width="240" height="64" rx="10" fill="#0B1821" stroke="rgba(159,211,216,0.35)"/><text x="26" y="46" font-size="13.5" font-weight="600" fill="#F5F6F6">Sirion repository</text><text x="26" y="66" font-size="12" fill="#8FA3A7">Contracts, plus SAP S/4HANA and Ariba</text>
@@ -1172,7 +1169,7 @@ function showTour() {
 
 /* ---------------- walkthrough (auto-play) ---------------- */
 const WALK = [
-  { r: 'story', c: 'Contract health, shown for Asian Paints, a Sirion customer. It catches signed supplier contracts that have drifted from what was agreed, or from today\'s market.' },
+  { r: 'story', c: 'Contract health, shown through one example persona: a large manufacturer like Asian Paints. It catches signed supplier contracts that have drifted from what was agreed, or from today\'s market.' },
   { r: 'story', spot: '#pim', c: 'Who it\'s for: Procurement uses it every day. IT, Legal and Finance must agree. The CPO pays, and the supplier reacts.' },
   { r: 'signin', c: 'Anyone can open it. Judges use the demo button, no account needed.' },
   { r: 'overview', hero: true, c: 'On first visit, a short launch section explains what\'s new in Sirion.' },
