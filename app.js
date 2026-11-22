@@ -255,7 +255,7 @@ function renderStory() {
       <h3 class="h3" style="margin-top:4px">The problem</h3>
       <p class="quote">A supplier's fuel charge stays at last year's rate while diesel gets cheaper, and the contract renews by itself in 13 days. Nobody notices until the invoice arrives.</p>
       <p class="body">A supplier contract is priced on the day it is signed, but market rates and invoices keep moving. Notice windows are short, the person who signed has often moved on, and nobody checks the invoice against the contract. Across 2,500 suppliers this adds up to crores a year in overcharges and renewals nobody chose. Contract health closes that gap. Each morning it compares every contract with what the supplier bills and what the market does, and gives the right person one clear action. Software licences come later as an add-on, because they need usage data that companies don't always share.</p>
-      <div class="lightcard evcard"><div class="ev-h"><h3>Independent research says the same</h3><p class="muted">Money leaks after signing, in every industry. These show the problem is real in general. The figures inside the product are made up, so they illustrate it and don't prove it for any one client.</p></div><div class="ev-g">${ev.map(e => `<div class="ev"><b class="num">${e.big}</b><p>${e.t}</p><a href="${e.u}" target="_blank" rel="noopener">${e.s} ↗</a></div>`).join('')}</div></div>
+      <div class="lightcard evcard"><div class="ev-h"><h3>Independent research says the same</h3><p class="muted">Value leaks after signing in every industry. These independent studies show how common it is. The figures inside the demo are illustrative.</p></div><div class="ev-g">${ev.map(e => `<div class="ev"><b class="num">${e.big}</b><p>${e.t}</p><a href="${e.u}" target="_blank" rel="noopener">${e.s} ↗</a></div>`).join('')}</div></div>
       <h3 class="h3">The solution, in five steps</h3>
       <div class="tiles" id="tiles" role="tablist" aria-label="The five steps">${STEPS.map((x, i) => `<button class="tile${i === 0 ? ' on' : ''}" role="tab" aria-selected="${i === 0}" data-i="${i}"><span class="tb">${I[x.ico] || I.doc}</span>${x.name}<span class="dot"></span></button>`).join('')}</div>
       <div class="tilepanel" id="tilepanel"></div>
@@ -632,7 +632,7 @@ function renderOverview() {
     <details id="more" class="more" ${S.openMore ? 'open' : ''}><summary>Trends and market prices</summary>
     <section class="row2">
       <figure class="card" id="chart-card" style="margin:0;padding:16px 18px 8px">
-        <figcaption style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap"><div><h2 class="h">How much extra you've paid each month</h2><div class="sub">Prices and terms drifted after signing, and nobody caught it, so the gap kept growing.</div></div>
+        <figcaption style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap"><div><h2 class="h">How much extra you've paid each month</h2><div class="sub">What you paid above the contract and market rates.</div></div>
           <div class="seg" role="tablist" aria-label="Chart view" style="margin-left:auto"><button role="tab" aria-selected="${S.chartMode === 'month'}" data-cm="month">Each month</button><button role="tab" aria-selected="${S.chartMode === 'sum'}" data-cm="sum">Added up</button></div></figcaption>
         <div class="chart" id="ovChart" role="img" aria-label="Extra paid each month, rising from almost nothing in January 2024 to ${MONEY(PORTFOLIO.extraThisMonth)} in November 2026, and staying there if nothing changes"></div>
       </figure>
@@ -690,7 +690,7 @@ function renderContract(id) {
       <div><h2 class="h">What the contract says</h2><div class="sub" style="margin-bottom:6px">Read from the signed contract by Sirion's Extraction Agent</div>
         ${c.clauses.map(k => `<div class="clause"><div class="muted" style="font-size:12.5px;margin-bottom:4px">${k.ref}</div><q>${k.text}</q><span class="src">${I.doc}Sirion Extraction Agent</span></div>`).join('')}
         <div class="note" style="margin-top:8px">${c.missing}</div></div>
-      <div><h2 class="h">What actually happened</h2><div class="sub" style="margin-bottom:6px">Checked against invoices, usage and outside prices</div>
+      <div><h2 class="h">What actually happened</h2><div class="sub" style="margin-bottom:6px">Checked against invoices and market prices</div>
         ${liveContractBox(c.id)}
         ${c.facts.map(f => `<div class="clause"><div style="font-size:15px">${f.t}</div><span class="src ${f.ext ? 'ext' : ''}">${f.ext ? I.feed : I.doc}${f.s}</span></div>`).join('')}
         <details class="work" style="margin-top:12px"><summary>How we worked out the money</summary><div class="note num" style="margin-top:8px">${c.work}</div></details></div>
@@ -1343,7 +1343,7 @@ function liveStatusCard() {
   const row = (name, what, ok, note) => `<tr style="cursor:default"><td><b style="font-weight:500">${name}</b><div class="muted" style="font-size:12px">${what}</div></td><td>${LIVE.loading ? '<span class="pill grey">Checking</span>' : ok ? '<span class="pill green"><i></i>Live</span>' : '<span class="pill grey">Not connected</span>'}</td><td class="muted">${note}</td></tr>`;
   const m = LIVE.market;
   return `<section class="card" id="liveStatus" style="margin-top:16px;overflow:hidden">
-    <div style="padding:14px 18px 10px"><h2 class="h">Live outside sources</h2><div class="sub">Fetched by this prototype's server each time the page opens, cached for 30 minutes.</div></div>
+    <div style="padding:14px 18px 10px"><h2 class="h">Live outside sources</h2><div class="sub">Fetched each time the page opens and cached for 30 minutes.</div></div>
     <table class="t"><thead><tr><th>Source</th><th>Status</th><th>Latest</th></tr></thead><tbody>
       ${row('Google News, India edition', 'Supplier and Asian Paints news', !!LIVE.news, LIVE.news ? LIVE.news.topics.reduce((s, t) => s + t.items.length, 0) + ' headlines, ' + ago(LIVE.news.updated) : '')}
       ${row('Diesel price, Mumbai', 'Read from today\'s fuel price headlines', !!(m && m.diesel && m.diesel.price), m && m.diesel && m.diesel.price ? '₹' + m.diesel.price.value + ' a litre' : 'No price in today\'s headlines')}
