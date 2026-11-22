@@ -62,10 +62,10 @@ async function askGemini(res, messages, body) {
     generationConfig: { maxOutputTokens: body.voice ? 400 : 900, temperature: 0.3 }
   };
   const call = p => fetch('https://generativelanguage.googleapis.com/v1beta/models/' + GMODEL + ':generateContent', {
-    method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': GKEY }, body: JSON.stringify(p)
+    method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': GKEY }, body: JSON.stringify(p), signal: AbortSignal.timeout(p.tools ? 20000 : 25000)
   });
-  let r = await call(payload);
-  let j = await r.json();
+  let r, j;
+  try { r = await call(payload); j = await r.json(); } catch (e) { r = { ok: false }; j = null; }
   if (!r.ok) {
     // Search grounding may be unavailable on the free tier: retry without it.
     const plain = Object.assign({}, payload); delete plain.tools;
