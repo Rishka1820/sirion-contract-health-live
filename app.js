@@ -578,14 +578,10 @@ function launchHero() {
 }
 function inboxCard() {
   if (S.role === 'procurement') return '';
-  const p = PEOPLE[S.role], waiting = flowWaitingOn() === S.role;
+  const waiting = flowWaitingOn() === S.role;
+  if (!waiting) return '';
   const step = FLOW_STEPS[S.flow];
-  return `<section class="rolecard rise" style="margin-bottom:16px">
-    <div style="display:flex;align-items:center;gap:10px"><span class="av" style="width:30px;height:30px;background:${p.color}">${p.initials}</span><div><div style="font-weight:600">You are viewing as ${p.name}</div><div class="muted" style="font-size:12.5px">${p.role}</div></div><button class="btn ghost" data-role-set="procurement" style="margin-left:auto">Back to Priya</button></div>
-    <div class="wants"><div><b>Wants</b>${p.wants}</div><div><b>Worries about</b>${p.worries}</div></div>
-    ${waiting ? `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span class="pill purple"><i></i>Waiting for you</span><span>${step.title}: Zenvault renewal</span><a class="btn primary" href="#c-zenvault" style="margin-left:auto">Open it</a></div>`
-      : `<div class="muted">Nothing is waiting for ${p.name.split(' ')[0]} right now.${S.flow < 6 ? ' Next up: ' + PEOPLE[flowWaitingOn()].name + '.' : ''}</div>`}
-  </section>`;
+  return `<section class="rolecard rise" style="margin-bottom:16px"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span class="pill purple"><i></i>Waiting for you</span><span>${step.title}: Zenvault renewal</span><a class="btn primary" href="#c-zenvault" style="margin-left:auto">Open it</a></div></section>`;
 }
 function renderOverview() {
   const urgent = CONTRACTS.filter(c => !done(c) && c.due.days <= 30);
