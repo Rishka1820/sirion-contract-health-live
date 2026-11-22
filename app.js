@@ -982,7 +982,7 @@ SirionAPI.onLog(() => { const b = $('#logBody'); if (b) b.innerHTML = logRows();
 
 /* ---------------- AskSirion ---------------- */
 const QA = [
-  { k: ['week', 'do first', 'today', 'should i do'], q: 'What should I do this week?',
+  { k: ['week', 'do first', 'should i do', 'urgent', 'priorit'], q: 'What should I do this week?',
     say: 'Two things are urgent. First, Prime Staffing is billing above the agreed rate. Claim eighteen lakh back before the December invoice is paid. Second, give Zenvault notice by the second of December to cut unused seats. That saves about one point seven crore a year.',
     html: () => `Two things this week, then one more before 5 Dec:${rowsList(CONTRACTS.filter(c => !done(c)).sort((a, b) => a.due.days - b.due.days).slice(0, 3))}`,
     src: ['Clause 12.3, Zenvault, page 11', 'Schedule B, Prime Staffing, page 14'], act: [['Open Western Roadways', 'c-western'], ['Open Prime Staffing', 'c-prime']] },
@@ -1009,7 +1009,8 @@ const QA = [
 ];
 function rowsList(list) { return `<div class="brief" style="margin-top:4px">${list.map(c => `<a href="#c-${c.id}"><span style="width:8px;height:8px;border-radius:50%;background:${c.mark === 'billed' ? '#E0517F' : c.mark === 'sla' ? '#C98BD3' : '#E0A33A'};flex:none"></span><span style="flex:1;min-width:0"><span style="display:block;font-weight:500">${c.supplier}</span><span class="muted" style="font-size:12px">${c.action.verb}</span></span><span class="num" style="font-size:12px">${MONEY(c.save.amount)}</span></a>`).join('')}</div>`; }
 function barsList(list) { const max = Math.max(...list.map(l => l[1])); return `<div class="brief" style="padding:10px 12px;display:grid;gap:7px;margin-top:4px">${list.map(l => `<div><div style="display:flex;justify-content:space-between;font-size:12.5px"><span>${l[0]}</span><b class="num">${MONEY(l[1])}</b></div><div style="height:5px;border-radius:3px;background:rgba(255,255,255,0.07);margin-top:4px"><div style="height:100%;width:${l[1] / max * 100}%;background:${l === list[0] ? '#E0517F' : '#5D939A'};border-radius:3px"></div></div></div>`).join('')}</div>`; }
-function findQA(text) { const t = text.toLowerCase(); return QA.find(x => x.k.some(k => t.includes(k))); }
+const HELLO = { k: [], q: 'Hello', say: 'Doing well, thanks. Ask me about a contract, a supplier or what to do this week.', html: () => 'Doing well, thanks. Ask me about a contract, a supplier or what to do this week.', src: [], act: [] };
+function findQA(text) { const t = text.toLowerCase().trim(); if (/^(hi|hey|hello|good (morning|afternoon|evening))\b/.test(t) || /how are you|how's it going|thank/.test(t)) { if (!/contract|supplier|renew|bill|save|zenvault|week|money/.test(t)) return HELLO; } return QA.find(x => x.k.some(k => t.includes(k))); }
 function askPanel() {
   const todo = CONTRACTS.filter(c => !done(c)).sort((a, b) => a.due.days - b.due.days).slice(0, 3);
   return `<aside class="ask" id="ask-panel" aria-label="AskSirion">
