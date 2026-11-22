@@ -1,3 +1,4 @@
+// Text to speech for AskSirion, using ElevenLabs.
 // Turns an answer into speech with ElevenLabs. Needs ELEVENLABS_API_KEY (and optionally ELEVENLABS_VOICE_ID) in Vercel.
 module.exports = async (req, res) => {
   const key = process.env.ELEVENLABS_API_KEY;
