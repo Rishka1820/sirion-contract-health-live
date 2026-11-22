@@ -61,10 +61,16 @@ async function askGemini(res, messages, body) {
     contents, tools: [{ google_search: {} }],
     generationConfig: { maxOutputTokens: body.voice ? 400 : 900, temperature: 0.3 }
   };
-  const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + GMODEL + ':generateContent', {
-    method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': GKEY }, body: JSON.stringify(payload)
+  const call = p => fetch('https://generativelanguage.googleapis.com/v1beta/models/' + GMODEL + ':generateContent', {
+    method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': GKEY }, body: JSON.stringify(p)
   });
-  const j = await r.json();
+  let r = await call(payload);
+  let j = await r.json();
+  if (!r.ok) {
+    // Search grounding may be unavailable on the free tier: retry without it.
+    const plain = Object.assign({}, payload); delete plain.tools;
+    r = await call(plain); j = await r.json();
+  }
   if (!r.ok) return res.status(502).json({ error: 'upstream', detail: j && j.error && j.error.message });
   const cand = (j.candidates || [])[0] || {};
   const text = ((cand.content && cand.content.parts) || []).map(p => p.text || '').join('').trim();
