@@ -22,6 +22,8 @@ const PORTFOLIO = {
   extraLastMonth: 5.3e6,
   confirmedSavings: 2.4e7,
   foundSoFar: 9.2e7,
+  securedSoFar: 4.1e7,   // approved or agreed in writing, includes what is already confirmed
+  securedByMonth: [0.12, 0.25, 0.42, 0.7, 0.98, 1.28, 1.65, 2.1, 2.7, 3.5, 4.1].map(v => v * 1e7),
   // Paid above market or contract terms, by month, Jan 2024 to Nov 2026 (in rupees)
   monthly: (() => {
     const out = [];
@@ -70,7 +72,7 @@ const CONTRACTS = [
     problem: 'Renews by itself on 1 Jan at 7% more. Only 1,240 of 2,000 seats are used.',
     short: 'Renews at +7% with 38% of seats unused',
     due: { date: '2 Dec 2026', days: 10, label: 'Notice deadline' },
-    gapPct: 61, gapLabel: '61% more seats than used',
+    gapPct: 38, gapLabel: '38% of seats unused',
     save: { amount: 1.68e7, label: 'a year' },
     lede: 'This contract renews by itself on 1 Jan 2027 for ₹4.49 Cr, 7% more than today. Your team uses 1,240 of the 2,000 seats you pay for.',
     chart: { kind: 'line', unit: 'seats', title: 'Seats you pay for vs seats people use',
@@ -88,7 +90,7 @@ const CONTRACTS = [
       { t: 'Asking for 1,300 seats leaves room for 5% growth.', s: 'Headcount plan, shared by Arjun (IT)', ext: true },
       { t: 'Similar tools renewed with a 3% rise in your last two renewals.', s: 'Past renewals in Sirion' }
     ],
-    work: 'Today: 2,000 seats × ₹21,000 × 1.07 = ₹4.49 Cr. Proposed: 1,300 seats × ₹21,630 (3% rise) = ₹2.81 Cr. Difference: ₹1.68 Cr a year.',
+    work: 'Today: 2,000 seats × ₹21,000 × 1.07 = ₹4.49 Cr. Part 1, your right under clause 12.3: 1,300 seats at the same 7% rise = ₹2.92 Cr, so ₹1.57 Cr less. Part 2, needs Zenvault to agree: a 3% rise instead of 7% saves another ₹10.9 L. Together: ₹1.68 Cr a year.',
     action: { verb: 'Cut unused seats before renewal', button: 'Cut unused seats', multi: true },
     flow: 'zenvault'
   },
@@ -225,12 +227,12 @@ const HEALTHY = [
 
 /* The one contract we walk through every stakeholder. */
 const FLOW_STEPS = [
-  { who: 'procurement', title: 'Priya reviews the flag and drafts a change', done: 'Change drafted: 1,300 seats, rise capped at 3%' },
-  { who: 'owner', title: 'Arjun confirms how many seats IT needs', done: 'Arjun confirmed 1,300 seats is enough' },
+  { who: 'procurement', title: 'Priya reviews the flag and drafts a change', done: 'Change drafted and saved' },
+  { who: 'owner', title: 'Arjun confirms how many seats IT needs', done: 'Arjun confirmed the seat count' },
   { who: 'legal', title: 'Meera checks the notice wording and timing', done: 'Meera approved the notice' },
-  { who: 'supplier', title: 'Zenvault replies to the notice', done: 'Zenvault offered 1,350 seats at +3%' },
-  { who: 'procurement', title: 'Priya accepts or pushes back', done: 'Priya accepted 1,350 seats at +3%' },
-  { who: 'finance', title: 'Rahul confirms the saving once the new order is live', done: 'Rahul confirmed ₹1.57 Cr a year saved' }
+  { who: 'supplier', title: 'Zenvault replies to the notice', done: 'Zenvault replied, or the deadline passed' },
+  { who: 'procurement', title: 'Priya settles the price rise', done: 'Priya settled the rise' },
+  { who: 'finance', title: 'Rahul records the saving as secured', done: 'Rahul recorded the saving as secured' }
 ];
 
 /* A tiny layer shaped like a REST API, so the screens never touch data directly.
@@ -265,7 +267,7 @@ const SirionAPI = (() => {
     approve(c, who) { record('POST', '/workflows/' + c.ref + '/approve', 'Approved by ' + PEOPLE[who].name.split(' ')[0]); },
     sendNotice(c) { record('POST', '/contracts/' + c.ref + '/notices', 'Sent to ' + c.supplier); },
     supplierReply(c, text) { record('POST', '/portal/' + c.ref + '/replies', text); },
-    confirmSaving(c, amount) { record('POST', '/savings', MONEY(amount) + ' confirmed by Finance'); },
+    confirmSaving(c, amount, stage) { record('POST', '/savings', MONEY(amount) + (stage === 'secured' ? ' recorded as secured' : ' confirmed in the books')); },
     ask(q) { record('POST', '/asksirion/query', '"' + q.slice(0, 38) + (q.length > 38 ? '…' : '') + '"'); },
     live(method, path, result) { record(method, path, result); }
   };

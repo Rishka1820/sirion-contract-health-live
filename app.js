@@ -47,15 +47,27 @@ const S = {
   flow: 0,                 // how many FLOW_STEPS are done (0..6)
   stage: {},               // other contracts: 0 open, 1 sent, 2 supplier agreed, 3 confirmed
   confirmed: PORTFOLIO.confirmedSavings,
-  heroSeen: store.get('heroSeen', false),
+  secured: PORTFOLIO.securedSoFar,
+  found: () => PORTFOLIO.foundSoFar,
+  seats: 1300, proposedRise: 3, agreedRise: null, reply: null, letter: null, zvConfirmed: false,
+  heroSeen: store.get('heroSeen', true),
   banner: true,
   filterCat: null,
   tab: 'month',
   chartMode: 'month',
   chat: [],
   menu: false,
-  walk: -1
+  walk: -1,
+  askOpen: false
 };
+const ZV = { unit: 21000, seats0: 2000, used: 1240 };
+function zvCalc(seats, rise) {
+  const cur = ZV.seats0 * ZV.unit * 1.07;
+  const contractual = cur - seats * ZV.unit * 1.07;
+  const negotiated = seats * ZV.unit * (0.07 - rise / 100);
+  return { cur, contractual, negotiated, total: contractual + negotiated, newTotal: seats * ZV.unit * (1 + rise / 100) };
+}
+const NUM = (n) => Number(n).toLocaleString('en-IN');
 const done = (c) => c.id === 'zenvault' ? S.flow >= 6 : (S.stage[c.id] || 0) >= 3;
 
 /* ---------------- charts ---------------- */
@@ -202,20 +214,19 @@ function renderStory() {
       <div class="grid3" style="margin-top:18px">
         <div class="reason"><h3>All three named problems happen here</h3><p>Auto-renewals nobody reviews, service levels that get missed, and invoices that don't match agreed prices. Every one of them happens after signing.</p></div>
         <div class="reason"><h3>Nobody watches after signing</h3><p>Procurement and Legal move on to the next deal. Business teams don't read contracts. So when terms drift, nobody notices.</p></div>
-        <div class="reason"><h3>It pays back fastest</h3><p>Intake and negotiation help the next deal. This stage wins back money on the 2,500 contracts already signed, from day one.</p></div>
+        <div class="reason"><h3>Every gap is a fact you can check</h3><p>The contract is signed, so what it says is fixed. Comparing it with invoices and usage shows a clear gap, not an opinion. Intake and negotiation can't offer that.</p></div>
       </div>
       <div class="whyap">
-        <div class="wa-l"><span class="tpill">Why Asian Paints</span><h3>They already contract on Sirion. This covers what happens after signing.</h3>
-          <p>Asian Paints moved its supplier contracting to Sirion when it outgrew its old procurement tool: 70+ templates, self-serve contracts, and live supplier data from SAP S/4HANA and SAP Ariba. That covers everything up to signature. Contract health uses the same SAP data to check that what gets billed matches what was signed.</p>
-          <a href="https://www.sirion.ai/library/customer-stories/asianpaints/" target="_blank" rel="noopener">Read the Asian Paints story on sirion.ai ↗</a></div>
+        <div class="wa-l"><span class="tpill">The client</span><h3>The brief's company has no contract tool. Asian Paints is the stand-in.</h3>
+          <p>The brief describes about 3,000 employees and 2,500 service suppliers, with no contract management system. I used Asian Paints as a realistic name and scale. Day one is small: load only the contracts renewing in the next 90 days, have a person check the terms Sirion's Extraction Agent reads, and get usage reports from IT. Invoices and orders already live in the ERP, so they don't need a contract tool.</p>
+          <a href="https://static.asianpaints.com/content/dam/annual-report-2526/pdf/Value-Creation-Model.pdf" target="_blank" rel="noopener">Asian Paints Annual Report 2025-26 and BRSR ↗</a></div>
         <div class="wa-r">
           <div><b>#1</b><span>paint company in India</span></div>
           <div><b class="num">13</b><span>plants in India, plus 250+ offices, warehouses and distribution centres</span></div>
-          <div><b class="num">30,000+</b><span>suppliers. This case covers the 2,500 that sell services</span></div>
-          <a class="wa-src" href="https://static.asianpaints.com/content/dam/annual-report-2526/pdf/Value-Creation-Model.pdf" target="_blank" rel="noopener">Asian Paints Annual Report 2025-26 and BRSR ↗</a>
+          <div><b class="num">2,500</b><span>service suppliers in scope, from the brief</span></div>
         </div>
       </div>
-      <div class="note" style="margin-top:16px;max-width:860px">Going deep, not broad: the product does one job. It finds signed contracts that have drifted from what was agreed, or from today's market, and gets them fixed in time.</div>
+      <div class="note" style="margin-top:16px;max-width:860px">Going deep, not broad: the first release does one job. It catches supplier contracts that are about to renew on their own, compares what you pay for with what people use, and gets the change approved before the notice deadline. Everything else waits on the roadmap.</div>
     </div></section>
 
     <section class="sec" id="sec-who"><div class="story-wrap">
@@ -233,11 +244,11 @@ function renderStory() {
         ${[['procurement', 'Can\'t reread 2,500 contracts. Finds problems only after the invoice is paid, or after the renewal date has passed.'], ['owner', 'Is asked to cut costs, but has no clear view of what the team actually uses.'], ['legal', 'Gets rushed notices days before a deadline, with no clause references.'], ['finance', 'Sees "savings" claimed that never show up in the books.'], ['supplier', 'Gets vague complaints instead of clear requests it can act on.']].map(p => { const x = PEOPLE[p[0]]; return `<div class="pain"><span class="av" style="width:28px;height:28px;background:${x.color}">${x.initials}</span><div><b>${x.role.replace(' (business owner)', '').replace(', Zenvault', ' (supplier)')}</b><span>${p[1]}</span></div></div>`; }).join('')}
       </div>
       <h3 class="h3">How we decided what to fix first</h3>
-      <p class="body">We scored each kind of drift on four questions: how much money is at stake, how often it happens, how reliably we can catch it from the data, and whether Procurement can fix it without a long negotiation.</p>
+      <p class="body">We scored each kind of drift on four questions: how much money is at stake, how often it happens, how reliably we can catch it from the data, and whether Procurement can fix it without a long negotiation. Only one comes first. The rest are on the roadmap.</p>
       <div class="grid2" style="margin-top:12px;align-items:start">
         <div class="card" style="padding:14px 14px 6px"><div style="font-weight:600;font-size:14px">Money at stake vs how reliably we can catch it</div><div class="muted" style="font-size:12.5px">Bigger circle: happens more often</div><div id="prioChart" style="height:300px" role="img" aria-label="Chart of six kinds of drift. Auto-renewals and billing above agreed rates are high money and easy to catch. Prices above market with no clause are hard to catch."></div></div>
         <div class="card" style="overflow:hidden"><table class="t"><thead><tr><th>Kind of drift</th><th>Money a year</th><th>Catch it reliably?</th><th>Priority</th></tr></thead><tbody>
-          ${[['Auto-renewals at a higher price', '₹2.6 Cr', 'Yes: dates and usage', 'Now', 'green'], ['Billed above agreed rates', '₹1.9 Cr', 'Yes: invoice vs rate card', 'Now', 'green'], ['Price links not applied (fuel, raw materials)', '₹1.0 Cr', 'Yes: named index', 'Now', 'green'], ['Rises above a price cap', '₹0.8 Cr', 'Yes: named index', 'Now', 'green'], ['Missed service levels', '₹0.5 Cr', 'Partly: needs delivery data', 'Next', 'amber'], ['Above market, no clause to point to', 'Not counted', 'Hard: needs benchmarks', 'Later', 'grey']].map(r => `<tr style="cursor:default"><td>${r[0]}</td><td class="num">${r[1]}</td><td class="muted">${r[2]}</td><td><span class="pill ${r[4]}">${r[3]}</span></td></tr>`).join('')}
+          ${[['Auto-renewals at a higher price, or for more than is used', '₹2.6 Cr', 'Yes: dates and usage', 'First release', 'green'], ['Billed above agreed rates', '₹1.9 Cr', 'Yes: invoice vs rate card', 'Next', 'amber'], ['Price links not applied (fuel, raw materials)', '₹1.0 Cr', 'Yes: named index', 'Next', 'amber'], ['Rises above a price cap', '₹0.8 Cr', 'Yes: named index', 'Next', 'amber'], ['Missed service levels', '₹0.5 Cr', 'Partly: needs delivery data', 'Later', 'grey'], ['Above market, no clause to point to', 'Not counted', 'Hard: needs benchmarks', 'Later', 'grey']].map(r => `<tr style="cursor:default"><td>${r[0]}</td><td class="num">${r[1]}</td><td class="muted">${r[2]}</td><td><span class="pill ${r[4]}">${r[3]}</span></td></tr>`).join('')}
         </tbody></table></div>
       </div>
     </div></section>
@@ -246,19 +257,19 @@ function renderStory() {
       ${secHead('sec-solve', 'The fix', 'The problem and the solution, in depth', '')}
       <h3 class="h3" style="margin-top:4px">The problem</h3>
       <p class="quote">Zenvault renews on its own on 1 January at 7% more. Only 1,240 of the 2,000 seats are used. Nobody will notice until the invoice arrives.</p>
-      <p class="body">Each case is small on its own: a fuel charge that didn't drop, a staffing rate ₹52 an hour too high, a missed campaign with no credit claimed. Across 2,500 contracts it comes to about ₹6.8 Cr a year in this example, and it grows every month nobody looks.</p>
-      <div class="lightcard evcard"><div class="ev-h"><h3>Independent research says the same</h3><p class="muted">Money leaks after signing, in every industry.</p></div><div class="ev-g">${ev.map(e => `<div class="ev"><b class="num">${e.big}</b><p>${e.t}</p><a href="${e.u}" target="_blank" rel="noopener">${e.s} ↗</a></div>`).join('')}</div></div>
+      <p class="body">Auto-renewals are quiet. The notice window is 30 days, the person who signed has moved on, and nobody checks usage. In this example, renewals that rise in price or keep unused seats cost about ₹2.6 Cr a year, and Zenvault alone is most of it. Other kinds of drift, like fuel charges and staffing rates, are on the roadmap.</p>
+      <div class="lightcard evcard"><div class="ev-h"><h3>Independent research says the same</h3><p class="muted">Money leaks after signing, in every industry. These show the problem is real in general. The figures inside the product are made up, so they illustrate it and don't prove it for any one client.</p></div><div class="ev-g">${ev.map(e => `<div class="ev"><b class="num">${e.big}</b><p>${e.t}</p><a href="${e.u}" target="_blank" rel="noopener">${e.s} ↗</a></div>`).join('')}</div></div>
       <h3 class="h3">The solution, in five steps</h3>
       <div class="tiles" id="tiles" role="tablist" aria-label="The five steps">${STEPS.map((x, i) => `<button class="tile${i === 0 ? ' on' : ''}" role="tab" aria-selected="${i === 0}" data-i="${i}"><span class="tb">${I[x.ico] || I.doc}</span>${x.name}<span class="dot"></span></button>`).join('')}</div>
       <div class="tilepanel" id="tilepanel"></div>
       <div class="note" style="margin-top:16px;max-width:860px"><b style="color:#fff">What it never does:</b> send anything to a supplier on its own. It reads, compares, explains and drafts. People decide.</div>
-      <div class="note" style="margin-top:10px;max-width:860px"><b style="color:#fff">Assumptions:</b> Asian Paints is a real Sirion customer, but every supplier, person and number in the product is made up. Its signed contracts are already in Sirion, invoices come from SAP S/4HANA, and orders and supplier details come from SAP Ariba. For a client with no contract system, as in the brief, step one would be loading contracts from email and shared drives with Sirion's Extraction Agent. Prices, diesel, inflation and software usage come from outside feeds.</div>
+      <div class="note" style="margin-top:10px;max-width:860px"><b style="color:#fff">Assumptions:</b> every supplier, person and number in the product is made up. The client has no contract system, as in the brief, so the product starts with the contracts renewing in the next 90 days. Sirion's Extraction Agent reads them from email and shared drives, and a person checks the terms once. Invoices come from the ERP (SAP S/4HANA here), and usage comes from IT's admin reports. News, diesel and inflation feeds are live.</div>
     </div></section>
 
     <section class="sec" id="sec-right"><div class="story-wrap">
       ${secHead('sec-right', 'The proof', 'Have we built it right? What would say otherwise?', '')}
       <div class="grid2" style="margin-top:8px">
-        <div class="stat"><div class="muted" style="font-size:12.5px">The one number we steer by</div><b style="font-size:26px;margin-top:4px;line-height:1.2">Money saved or won back, confirmed by Finance</b><p>Counted only when a credit note, refund or lower price shows up in the books. Not when we flag it, and not when a supplier agrees by email.</p><a href="#working">See it live in the product ↗</a></div>
+        <div class="stat"><div class="muted" style="font-size:12.5px">The one number we steer by</div><b style="font-size:26px;margin-top:4px;line-height:1.2">Money saved or won back, confirmed by Finance</b><p>Three stages, so nothing is counted early: <b style="color:#fff">found</b> (flagged), <b style="color:#fff">secured</b> (the contract allows it, or the supplier agreed in writing) and <b style="color:#fff">confirmed</b> (a credit note, refund or lower invoice is in the books). The headline is confirmed only.</p><a href="#working">See it live in the product ↗</a></div>
         <div class="stat"><div class="muted" style="font-size:12.5px">How we'll know it works</div>
           <div class="metric-row" style="border-top:0"><span>Flags acted on before the deadline</span><span class="muted">Aim</span><b class="num">70%+</b></div>
           <div class="metric-row"><span>Flags a person says are right</span><span class="muted">Aim</span><b class="num">85%+</b></div>
@@ -277,8 +288,8 @@ function renderStory() {
     <section class="sec" id="sec-future"><div class="story-wrap">
       ${secHead('sec-future', 'The road ahead', 'What does the future look like?', '')}
       <div class="roadmap">
-        <div class="rm"><div class="rk">Now <span class="muted">this prototype</span></div><ul><li>Six kinds of drift checked every morning</li><li>One contract walked through five people</li><li>AskSirion by typing or voice, answering with live web search</li><li>Live news, diesel and inflation feeds</li><li>Savings counted only when Finance confirms</li></ul></div>
-        <div class="rm"><div class="rk">Next <span class="muted">3 to 6 months</span></div><ul><li>Pull software usage straight from sign-in logs</li><li>Live supplier portal for replies and credit notes</li><li>Alerts in Teams, Slack and email</li><li>More checks: volume discounts and rebates</li></ul></div>
+        <div class="rm"><div class="rk">Now <span class="muted">this prototype</span></div><ul><li>Auto-renewals checked every morning against usage</li><li>One renewal walked through five people, including a no-reply and a different seat count</li><li>AskSirion by typing or voice, with live headlines</li><li>Live news, diesel and inflation feeds</li><li>Found, secured and confirmed kept apart</li></ul></div>
+        <div class="rm"><div class="rk">Next <span class="muted">3 to 6 months</span></div><ul><li>Pull software usage straight from sign-in logs</li><li>Live supplier portal for replies and credit notes</li><li>Alerts in Teams, Slack and email</li><li>Next checks: billing above rate cards, price links like fuel, rises above a cap</li></ul></div>
         <div class="rm"><div class="rk">Later <span class="muted">6 to 18 months</span></div><ul><li>Stop drift at the source: suggest price caps and price links during negotiation</li><li>Fair-price benchmarks across Sirion customers, kept anonymous</li><li>Routine claims run end to end, with one approval</li></ul></div>
       </div>
     </div></section>
@@ -331,7 +342,7 @@ function renderStory() {
 
     <section class="sec" style="text-align:center"><div class="story-wrap">
       <h2 style="margin:0 auto 10px">See it for yourself</h2>
-      <p class="body" style="margin:0 auto 22px">Open the product as Priya, then use "View as" to follow one contract through five people.</p>
+      <p class="body" style="margin:0 auto 22px">Open the product as Priya, then follow one renewal through IT, Legal, the supplier and Finance. The flow card on the contract page tells you who is next.</p>
       <a class="btn primary big" href="#signin">Open the live product <span class="arr">→</span></a>
     </div></section>
 
@@ -343,8 +354,8 @@ function renderStory() {
 }
 function prioChart(el) {
   const pts = [
-    ['Auto-renewals', 9, 2.6, 30, '#E0517F'], ['Billed above rates', 8.6, 1.9, 34, '#E0517F'], ['Price links not applied', 8.2, 1.0, 26, '#E0517F'],
-    ['Rises above a cap', 7.8, 0.8, 18, '#E0517F'], ['Missed service levels', 5, 0.5, 24, '#E0A33A'], ['Above market, no clause', 2.6, 1.4, 22, '#5D939A']
+    ['Auto-renewals', 9, 2.6, 30, '#E0517F'], ['Billed above rates', 8.6, 1.9, 34, '#E0A33A'], ['Price links not applied', 8.2, 1.0, 26, '#E0A33A'],
+    ['Rises above a cap', 7.8, 0.8, 18, '#E0A33A'], ['Missed service levels', 5, 0.5, 24, '#E0A33A'], ['Above market, no clause', 2.6, 1.4, 22, '#5D939A']
   ];
   mkChart(el, {
     grid: { left: 48, right: 20, top: 20, bottom: 44 },
@@ -353,7 +364,7 @@ function prioChart(el) {
     yAxis: { type: 'value', min: 0, max: 3, axisLabel: { color: '#8FA3A7', formatter: v => '₹' + v + ' Cr' }, splitLine: axisStyle.splitLine },
     series: [{ type: 'scatter', data: pts.map(p => ({ value: [p[1], p[2], p[3], p[0]], symbolSize: p[3], itemStyle: { color: p[4], opacity: 0.85 } })),
       label: { show: true, position: 'right', formatter: p => p.data.value[3], color: '#E6EEEF', fontFamily: 'Hanken Grotesk, system-ui, sans-serif', fontSize: 11.5 },
-      markArea: { silent: true, itemStyle: { color: 'rgba(63,167,160,0.06)' }, label: { show: true, position: 'insideTopLeft', formatter: 'Fix first', color: '#7FD3CC', fontFamily: 'Hanken Grotesk, system-ui, sans-serif' }, data: [[{ xAxis: 7 }, { xAxis: 10 }]] } }]
+      markArea: { silent: true, itemStyle: { color: 'rgba(63,167,160,0.06)' }, label: { show: true, position: 'insideTopLeft', formatter: 'Catchable', color: '#7FD3CC', fontFamily: 'Hanken Grotesk, system-ui, sans-serif' }, data: [[{ xAxis: 7 }, { xAxis: 10 }]] } }]
   });
 }
 
@@ -366,8 +377,8 @@ const STEPS = [
     demo: `<div class="tpd-flag"><span class="pill rose"><i></i>Billed above the rate card</span><b>Prime Staffing Services</b><span>₹612 an hour billed. ₹560 agreed.</span><div class="tpd-row"><span>Overcharged so far</span><b>₹18.2 L</b></div><div class="tpd-row"><span>Owner</span><b>Priya, Procurement</b></div></div>` },
   { name: 'Act', ico: 'send', k: 'A draft, not a to-do', p: 'The right person gets a draft notice or claim that quotes the clause. Everyone who must say yes approves it in turn, inside Sirion.',
     demo: `<div class="tpd-h">Draft notice to Zenvault</div><p class="tpd-letter">Under clause 12.3, Asian Paints gives notice to reduce named users to 1,300 from the renewal date of 1 January 2027…</p><div class="tpd-appr"><span class="ok">✓ Arjun, IT</span><span class="ok">✓ Meera, Legal</span><span>Send to supplier</span></div>` },
-  { name: 'Confirm', ico: 'chart', k: 'Saved means banked', p: 'Finance confirms when a credit note, refund or lower price shows up in the books. Only then does it count as saved.',
-    demo: `<div class="tpd-h">Zenvault renewal</div><div class="tpd-row"><span>New order in SAP Ariba</span><b>1,350 seats, +3%</b></div><div class="tpd-row"><span>Confirmed by</span><b>Rahul, Finance</b></div><div class="tpd-big">₹1.57 Cr a year saved</div>` }
+  { name: 'Confirm', ico: 'chart', k: 'Saved means banked', p: 'Finance marks a saving secured when the contract allows it or the supplier agrees. It counts as confirmed only when a credit note, refund or lower invoice shows up in the books.',
+    demo: `<div class="tpd-h">Zenvault renewal</div><div class="tpd-row"><span>New order in SAP Ariba</span><b>1,300 seats</b></div><div class="tpd-row"><span>Secured by Rahul, Finance</span><b>₹1.57 Cr a year</b></div><div class="tpd-row"><span>Confirmed in the books</span><b class="warnt">When the Jan invoice matches</b></div>` }
 ];
 let tileT, tileI = 0;
 function showTile(i) {
@@ -474,13 +485,13 @@ function renderSignin() {
 function shell(active, centerHTML) {
   const p = PEOPLE[S.role];
   const urgent = CONTRACTS.filter(c => !done(c) && c.due.days <= 30).length;
-  return `<div class="shell view">
+  return `<div class="shell view${S.askOpen ? '' : ' ask-closed'}">
     <aside class="side">
       <div class="logo"><span class="mark">${I.chart}</span><div style="line-height:1.15"><div style="font-weight:600;font-size:14.5px">Contract health</div><div style="font-size:11.5px;color:var(--text-3)">Asian Paints</div></div></div>
       <nav class="nav" aria-label="Main">
         <a href="#overview" ${active === 'overview' ? 'aria-current="page"' : ''}>${I.grid}Overview</a>
         <a href="#overview" data-scroll="todo">${I.list}Needs attention${urgent ? `<span class="count num">${urgent}</span>` : ''}</a>
-        <a href="#c-zenvault" ${active === 'contract' ? 'aria-current="page"' : ''}>${I.doc}Contracts</a>
+        <a href="#c-western" ${active === 'contract' ? 'aria-current="page"' : ''}>${I.doc}Contracts</a>
         <a href="#working" ${active === 'working' ? 'aria-current="page"' : ''}>${I.chart}Is it working?</a>
         <a href="#integrations" ${active === 'integrations' ? 'aria-current="page"' : ''}>${I.plug}Integrations</a>
       </nav>
@@ -495,19 +506,21 @@ function shell(active, centerHTML) {
     <div class="center">
       ${active === 'overview' && S.heroSeen && S.banner ? annc() : ''}
       <header class="topbar">
-        <div class="crumb">Procurement <span style="margin:0 6px;color:#4D6469">/</span> <b>${active === 'contract' ? 'Contract' : active === 'working' ? 'Is it working?' : active === 'integrations' ? 'Integrations' : 'Overview'}</b></div>
         <label class="search">${I.search}<span class="sr">Search contracts</span><input type="search" placeholder="Search contracts and suppliers" id="searchBox"></label>
-        <div class="viewas"><button id="viewAsBtn" aria-haspopup="menu" aria-expanded="${S.menu}"><span class="av" style="background:${p.color}">${p.initials}</span><span><span class="muted" style="font-size:11.5px;display:block;line-height:1">View as</span>${p.name.split(' ')[0]}</span>${I.down}</button>${S.menu ? viewAsMenu() : ''}</div>
+        <div class="viewas"><button id="viewAsBtn" class="acct" aria-haspopup="menu" aria-expanded="${S.menu}" aria-label="Account: ${p.name}" title="${p.name}"><span class="av" style="background:${p.color};width:32px;height:32px">${p.initials}</span></button>${S.menu ? viewAsMenu() : ''}</div>
       </header>
       ${centerHTML}
     </div>
     ${askPanel()}
+    ${S.askOpen ? '' : `<button class="askfab" id="askFab" aria-label="Open AskSirion"><span class="orb orbcore" style="width:28px;height:28px;display:grid;place-items:center;color:#fff">${I.mic}</span>Ask Sirion</button>`}
   </div>`;
 }
 function viewAsMenu() {
-  return `<div class="menu" role="menu" aria-label="View as">
-    <div class="muted" style="font-size:12px;padding:6px 8px 4px">See the product as a different person</div>
-    ${Object.values(PEOPLE).map(p => `<button role="menuitemradio" aria-checked="${S.role === p.key}" data-role="${p.key}"><span class="av" style="width:28px;height:28px;background:${p.color}">${p.initials}</span><span><span style="display:block;font-weight:500">${p.name}</span><span class="muted" style="font-size:12px">${p.role}</span></span>${flowWaitingOn() === p.key ? '<span class="pill purple" style="margin-left:auto">Next</span>' : ''}</button>`).join('')}
+  const me = PEOPLE[S.role];
+  return `<div class="menu" role="menu" aria-label="Account">
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 8px 12px;border-bottom:1px solid var(--line)"><span class="av" style="width:36px;height:36px;background:${me.color}">${me.initials}</span><span><span style="display:block;font-weight:600">${me.name}</span><span class="muted" style="font-size:12px">${me.role}, Asian Paints</span></span></div>
+    <div class="muted" style="font-size:11.5px;padding:10px 8px 4px">Demo: switch user</div>
+    ${Object.values(PEOPLE).map(p => `<button role="menuitemradio" aria-checked="${S.role === p.key}" data-role="${p.key}"><span class="av" style="width:26px;height:26px;background:${p.color}">${p.initials}</span><span style="flex:1;min-width:0"><span style="display:block;font-weight:500;font-size:13px">${p.name}</span><span class="muted" style="font-size:11.5px">${p.role}</span></span>${flowWaitingOn() === p.key ? '<span class="pill purple" style="font-size:11px">Waiting on</span>' : ''}</button>`).join('')}
   </div>`;
 }
 function closeMenus() { S.menu = false; }
@@ -598,22 +611,9 @@ function renderOverview() {
       <div><div class="muted" style="font-size:12.5px">Extra you paid this month</div><div class="big num">${MONEY(PORTFOLIO.extraThisMonth)}</div><div class="foot num" style="color:var(--rose-t)">↑ ${MONEY(PORTFOLIO.extraThisMonth - PORTFOLIO.extraLastMonth)} <span class="muted">more than October</span></div></div>
       <div><div class="muted" style="font-size:12.5px">You can still save</div><div class="big num">${MONEY(annual)}<span class="muted" style="font-size:13px;font-weight:400"> a year</span></div><div class="foot"><span class="muted">plus</span> <span class="num">${MONEY(oneoff)}</span> <span class="muted">back now, if you act on</span> <span class="num">${urgent.length}</span> <span class="muted">contracts this month</span></div></div>
       <div><div class="muted" style="font-size:12.5px">Contracts that need fixing</div><div class="big num">69<span class="muted" style="font-size:13px;font-weight:400"> of 2,500</span></div><div class="foot num"><span style="color:var(--amber-t)">52 priced too high</span><span class="muted">, </span><span style="color:var(--rose-t)">17 billed wrong</span></div></div>
-      <div><div class="muted" style="font-size:12.5px">Saved so far this year</div><div class="big num" id="confirmedNum">${MONEY(S.confirmed)}</div><div class="foot" style="color:var(--green-t)">Confirmed by finance <span class="muted">(${Math.round(S.confirmed / PORTFOLIO.foundSoFar * 100)}% of what we found)</span></div></div>
+      <div><div class="muted" style="font-size:12.5px">Confirmed in the books this year</div><div class="big num" id="confirmedNum">${MONEY(S.confirmed)}</div><div class="foot" style="color:var(--green-t)">Secured, waiting for invoices <span class="num">${MONEY(S.secured - S.confirmed)}</span></div></div>
     </section>
 
-    <section class="row2">
-      <figure class="card" id="chart-card" style="margin:0;padding:16px 18px 8px">
-        <figcaption style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap"><div><h2 class="h">How much extra you've paid each month</h2><div class="sub">Prices and terms drifted after signing, and nobody caught it, so the gap kept growing.</div></div>
-          <div class="seg" role="tablist" aria-label="Chart view" style="margin-left:auto"><button role="tab" aria-selected="${S.chartMode === 'month'}" data-cm="month">Each month</button><button role="tab" aria-selected="${S.chartMode === 'sum'}" data-cm="sum">Added up</button></div></figcaption>
-        <div class="chart" id="ovChart" role="img" aria-label="Extra paid each month, rising from almost nothing in January 2024 to ${MONEY(PORTFOLIO.extraThisMonth)} in November 2026, and staying there if nothing changes"></div>
-      </figure>
-      <div class="card" style="padding:16px 18px 8px">
-        <h2 class="h">What you're overpaying for</h2><div class="sub">Extra paid per year, by type of supplier. Click a bar to see those contracts.</div>
-        <div class="chart" id="catChart" style="height:250px" role="img" aria-label="Extra paid per year by supplier type: ${PORTFOLIO.categories.map(c => c.name + ' ' + MONEY(c.value)).join(', ')}"></div>
-      </div>
-    </section>
-
-    ${marketWatch()}
     <section class="card" id="todo" style="margin-top:16px;overflow:hidden">
       <div style="display:flex;align-items:center;gap:12px;padding:14px 18px 12px;flex-wrap:wrap">
         <div><h2 class="h">What needs your attention</h2><div class="sub">Most urgent first. Nothing is sent to a supplier until you say so.</div></div>
@@ -630,16 +630,30 @@ function renderOverview() {
           <td style="text-align:right"><a class="btn ${done(c) ? 'ghost' : 'primary'}" href="#c-${c.id}">${done(c) ? 'View' : c.action.button}</a></td></tr>`).join('')}
         ${!rows.length ? '<tr><td colspan="6" class="muted" style="padding:24px 16px">Nothing here. Pick another filter.</td></tr>' : ''}
       </tbody></table></div>
-      <div style="display:flex;gap:16px;padding:10px 18px;font-size:12px;background:rgba(255,255,255,0.02)" class="muted"><span>Showing ${rows.length} of 69. The rest work the same way.</span><a href="#c-zenvault" style="margin-left:auto;text-decoration:none">See all 69</a></div>
+      <div style="display:flex;gap:16px;padding:10px 18px;font-size:12px;background:rgba(255,255,255,0.02)" class="muted"><span>Showing ${rows.length} of 69. Only these are built in the demo; the rest work the same way.</span></div>
     </section>
+    <details id="more" class="more" ${S.openMore ? 'open' : ''}><summary>Trends and market prices</summary>
+    <section class="row2">
+      <figure class="card" id="chart-card" style="margin:0;padding:16px 18px 8px">
+        <figcaption style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap"><div><h2 class="h">How much extra you've paid each month</h2><div class="sub">Prices and terms drifted after signing, and nobody caught it, so the gap kept growing.</div></div>
+          <div class="seg" role="tablist" aria-label="Chart view" style="margin-left:auto"><button role="tab" aria-selected="${S.chartMode === 'month'}" data-cm="month">Each month</button><button role="tab" aria-selected="${S.chartMode === 'sum'}" data-cm="sum">Added up</button></div></figcaption>
+        <div class="chart" id="ovChart" role="img" aria-label="Extra paid each month, rising from almost nothing in January 2024 to ${MONEY(PORTFOLIO.extraThisMonth)} in November 2026, and staying there if nothing changes"></div>
+      </figure>
+      <div class="card" style="padding:16px 18px 8px">
+        <h2 class="h">What you're overpaying for</h2><div class="sub">Extra paid per year, by type of supplier. Click a bar to see those contracts.</div>
+        <div class="chart" id="catChart" style="height:250px" role="img" aria-label="Extra paid per year by supplier type: ${PORTFOLIO.categories.map(c => c.name + ' ' + MONEY(c.value)).join(', ')}"></div>
+      </div>
+    </section>
+
+    ${marketWatch()}
+    </details>
     <p class="muted" style="margin:18px 0 0;font-size:12px">Contracts, suppliers and money figures are illustrative. Market watch, diesel and inflation are live, fetched when this page opens. Contract terms read by Sirion's Extraction Agent; invoices from SAP S/4HANA.</p>
   </main>`;
   $('#root').innerHTML = shell('overview', center);
   wireShell();
-  overviewChart($('#ovChart'));
-  categoryChart($('#catChart'));
   wireMarketWatch();
-  $$('[data-cm]').forEach(b => b.onclick = () => { S.chartMode = b.dataset.cm; disposeCharts(); renderApp(); });
+  const mo = $('#more'); if (mo) mo.ontoggle = () => { if (mo.open && !mo.dataset.d) { mo.dataset.d = 1; overviewChart($('#ovChart')); categoryChart($('#catChart')); } };
+  $$('[data-cm]').forEach(b => b.onclick = () => { S.chartMode = b.dataset.cm; disposeCharts(); S.openMore = true; renderApp(); });
   $$('[data-tab]').forEach(b => b.onclick = () => { S.tab = b.dataset.tab; renderApp(); });
   const cc = $('#clearCat'); if (cc) cc.onclick = (e) => { e.stopPropagation(); S.filterCat = null; renderApp(); };
   $$('tr[data-go]').forEach(tr => { tr.onclick = (e) => { if (e.target.closest('a')) return; go(tr.dataset.go); }; tr.onkeydown = (e) => { if (e.key === 'Enter') go(tr.dataset.go); }; });
@@ -694,29 +708,46 @@ function trackHTML() {
   return `<ol class="track">${FLOW_STEPS.map((s, i) => { const st = i < S.flow ? 'done' : i === S.flow ? 'now' : ''; const p = PEOPLE[s.who];
     return `<li class="${st}"><span class="dot">${i < S.flow ? I.check : i + 1}</span><div><div class="ttl">${i < S.flow ? s.done : s.title}</div><div class="by">${p.name}, ${p.role}</div></div></li>`; }).join('')}</ol>`;
 }
+function splitBox(seats, rise, note) {
+  const z = zvCalc(seats, rise);
+  return `<div class="note" style="margin:8px 0;display:grid;gap:6px">
+    <div style="display:flex;justify-content:space-between;gap:10px"><span>Cut to ${NUM(seats)} seats <span class="muted">(your right, clause 12.3)</span></span><b class="num" style="color:#fff">${MONEY(z.contractual)}</b></div>
+    <div style="display:flex;justify-content:space-between;gap:10px"><span>${rise >= 7 ? 'Rise stays at 7%' : rise + '% rise, not 7%'} <span class="muted">(${rise >= 7 ? 'not agreed yet' : 'needs Zenvault to agree'})</span></span><b class="num" style="color:#fff">${MONEY(z.negotiated)}</b></div>
+    <div style="display:flex;justify-content:space-between;gap:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:6px"><span>Found, a year</span><b class="num" style="color:#fff">${MONEY(z.total)}</b></div>${note ? `<div class="muted" style="font-size:12px">${note}</div>` : ''}</div>`;
+}
+function zvSecured() { const r = S.agreedRise == null ? 7 : S.agreedRise; return zvCalc(S.seats, r); }
 function flowCard(c) {
   const who = flowWaitingOn();
-  if (S.flow >= 6) return `<div class="muted" style="font-size:12.5px">Who does what</div>${trackHTML()}<div class="note" style="margin-top:10px;color:var(--green-t)"><b class="num" style="display:block;font-size:20px;color:#fff">${MONEY(1.574e7)} a year</b>Saved, confirmed by Finance. The north-star number has gone up.</div>`;
+  if (S.flow >= 6) { const z = zvSecured();
+    return `<div class="muted" style="font-size:12.5px">Who does what</div>${trackHTML()}<div class="note" style="margin-top:10px;color:var(--green-t)"><b class="num" style="display:block;font-size:20px;color:#fff">${MONEY(z.total)} a year ${S.zvConfirmed ? 'confirmed' : 'secured'}</b>${S.zvConfirmed ? 'The January invoice matched. This now counts in the north-star number.' : 'Agreed in writing or allowed by the contract. It counts as confirmed once the first invoice in the books matches.'}</div>
+      ${S.zvConfirmed ? '' : '<button class="btn demo" style="width:100%;margin-top:8px" id="zvInvoice">Demo: the January 2027 invoice arrives</button>'}`; }
   const mine = who === S.role;
   const p = PEOPLE[who];
   let body = '';
   if (!mine) {
-    body = `<div class="note" style="margin-top:6px">Waiting on <b style="color:#fff">${p.name}</b> (${p.role}).</div><button class="btn primary" style="width:100%;margin-top:10px" data-role-set="${who}">Switch to ${p.name.split(' ')[0]}'s view</button>`;
+    body = `<div class="note" style="margin-top:6px">Waiting on <b style="color:#fff">${p.name}</b> (${p.role}).</div><button class="btn primary" style="width:100%;margin-top:10px" data-role-set="${who}">Switch to ${p.name.split(' ')[0]}'s view</button>${S.flow === 3 && S.role === 'procurement' ? '<button class="btn demo" style="width:100%;margin-top:8px" id="noReply">Demo: Zenvault does not reply by 15 Dec</button>' : ''}`;
   } else if (S.flow === 0) {
-    body = `<p style="margin:6px 0 10px;color:var(--text-2)">Cut to 1,300 seats and cap the rise at 3% before the 2 Dec notice deadline.</p><button class="btn primary" style="width:100%" id="openDraft">${c.action.button}</button>`;
+    body = `<p style="margin:6px 0 4px;color:var(--text-2)">Cut seats before the 2 Dec notice deadline, and ask for a lower rise.</p>${splitBox(S.seats, S.proposedRise)}<button class="btn primary" style="width:100%" id="openDraft">${c.action.button}</button>`;
   } else if (S.flow === 1) {
-    body = `${wantsBox(who)}<p style="margin:8px 0 10px;color:var(--text-2)">Priya wants to go to 1,300 seats. Your team used 1,240 in the last 90 days.</p>
-      <div style="display:flex;gap:8px"><button class="btn primary" id="ownerOk" style="flex:1">1,300 is enough</button><button class="btn ghost" id="ownerMore">We need more</button></div>`;
+    body = `${wantsBox(who)}<p style="margin:8px 0 8px;color:var(--text-2)">Priya wants to go to ${NUM(S.seats)} seats. Your team used ${NUM(ZV.used)} in the last 90 days. How many does IT need?</p>
+      <label class="muted" for="seatIn" style="font-size:12.5px">Seats for 2027</label>
+      <input id="seatIn" type="number" min="${ZV.used}" max="2000" step="10" value="${S.seats}" style="width:100%;margin:4px 0 8px;height:38px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.06);color:#fff;padding:0 10px;font:inherit">
+      <div id="seatPreview">${splitBox(S.seats, S.proposedRise)}</div>
+      <button class="btn primary" id="ownerOk" style="width:100%">Confirm seats</button>`;
   } else if (S.flow === 2) {
     body = `${wantsBox(who)}<div style="margin:8px 0">${['Sent before 2 Dec, 30 days before renewal (clause 12.3)', 'Quotes clause 12.2 and 12.3 exactly', 'Goes to the notice address in clause 18'].map(t => `<div class="check"><i>${I.check}</i>${t}</div>`).join('')}</div>
       <button class="btn ghost" style="width:100%;margin-bottom:8px" id="readNotice">Read the notice</button><button class="btn primary" style="width:100%" id="legalOk">Approve and send to Zenvault</button>`;
   } else if (S.flow === 3) {
-    body = `${wantsBox(who)}<button class="btn primary" style="width:100%;margin-top:8px" id="toPortal">Open the supplier portal</button>`;
+    body = `${wantsBox(who)}<button class="btn primary" style="width:100%;margin-top:8px" id="toPortal">Open the supplier portal</button><button class="btn demo" style="width:100%;margin-top:8px" id="noReply">Demo: Zenvault does not reply by 15 Dec</button>`;
   } else if (S.flow === 4) {
-    body = `<div class="note" style="margin:6px 0 10px">Zenvault replied: <b style="color:#fff">1,350 seats with a 3% rise.</b> That still saves ${MONEY(1.574e7)} a year.</div>
-      <div style="display:flex;gap:8px"><button class="btn primary" id="acceptCounter" style="flex:1">Accept 1,350 seats</button><button class="btn ghost" id="pushBack">Push back</button></div>`;
+    if (S.reply === 'accept') body = `<div class="note" style="margin:6px 0 10px">Zenvault accepted <b style="color:#fff">${NUM(S.seats)} seats and the ${S.proposedRise}% rise.</b></div>${splitBox(S.seats, S.proposedRise, 'Both parts are agreed.')}<button class="btn primary" style="width:100%" id="settle3">Accept and send to Finance</button>`;
+    else if (S.reply === 'counter') body = `<div class="note" style="margin:6px 0 10px">Zenvault accepted <b style="color:#fff">${NUM(S.seats)} seats</b> but offered a <b style="color:#fff">5% rise</b>, not ${S.proposedRise}%.</div>${splitBox(S.seats, 5, 'If you accept 5%.')}
+      <div style="display:flex;gap:8px"><button class="btn primary" id="settle5" style="flex:1">Accept 5%</button><button class="btn ghost" id="settle7">Hold at ${S.proposedRise}%, book a call</button></div>`;
+    else body = `<div class="note" style="margin:6px 0 10px">${S.reply === 'call' ? 'Zenvault asked for a call before deciding.' : 'Zenvault did not reply by 15 Dec.'} The seat cut still stands, because clause 12.3 does not need their agreement. The lower rise is not agreed, so the 7% applies for now.</div>${splitBox(S.seats, 7, 'Only the seat cut is secured.')}
+      <button class="btn primary" style="width:100%" id="settleSeats">Lock in the seat cut</button><button class="btn ghost" style="width:100%;margin-top:8px" id="bookCall">Book a call about the rise</button>`;
   } else if (S.flow === 5) {
-    body = `${wantsBox(who)}<div class="note" style="margin:8px 0">New order ZV-2027 is live: 1,350 seats at ₹21,630 = <b class="num" style="color:#fff">₹2.92 Cr</b>, down from ₹4.49 Cr.</div><button class="btn primary" style="width:100%" id="finOk">Confirm ${MONEY(1.574e7)} a year saved</button>`;
+    const z = zvSecured(), r = S.agreedRise == null ? 7 : S.agreedRise;
+    body = `${wantsBox(who)}<div class="note" style="margin:8px 0">New order ZV-2027 is live: ${NUM(S.seats)} seats at ${MONEY(ZV.unit * (1 + r / 100))} = <b class="num" style="color:#fff">${MONEY(z.newTotal)}</b>, down from ${MONEY(z.cur)}. It counts as <b style="color:#fff">confirmed</b> only when the first invoice in the books matches.</div><button class="btn primary" style="width:100%" id="finOk">Record ${MONEY(z.total)} a year as secured</button>`;
   }
   return `<div style="display:flex;align-items:center;justify-content:space-between"><div class="muted" style="font-size:12.5px">Act by</div>${duePill(c.due)}</div>
     <div class="num" style="font-size:22px;font-weight:600;margin:2px 0 6px">${c.due.date}</div>
@@ -743,25 +774,37 @@ function wireAct(c) {
   const b = (id, fn) => { const e = $('#' + id); if (e) e.onclick = fn; };
   b('openDraft', () => openDraft(c));
   if (c.flow) {
-    b('ownerOk', () => { S.flow = 2; SirionAPI.approve(c, 'owner'); SirionAPI.createTask(c, 'legal', 'Review notice'); toast('Arjun confirmed 1,300 seats. Sent to Meera in Legal.'); rerenderAct(c); });
-    b('ownerMore', () => toast('In the full product Arjun could enter a number. For this demo, 1,300 covers the 1,240 used plus growth.'));
+    const si = $('#seatIn');
+    if (si) si.oninput = () => { const n = parseInt(si.value, 10); if (n >= ZV.used && n <= 2000) $('#seatPreview').innerHTML = splitBox(n, S.proposedRise); };
+    b('ownerOk', () => {
+      const n = parseInt(($('#seatIn') || {}).value, 10);
+      if (!(n >= ZV.used && n <= 2000)) { toast('Enter a number from ' + NUM(ZV.used) + ' (seats in use) to 2,000.'); return; }
+      const changed = n !== S.seats; S.seats = n; if (changed) S.letter = null;
+      S.flow = 2; SirionAPI.approve(c, 'owner'); SirionAPI.createTask(c, 'legal', 'Review notice');
+      toast(changed ? 'Arjun set ' + NUM(n) + ' seats. The savings and the notice are updated. Sent to Meera in Legal.' : 'Arjun confirmed ' + NUM(n) + ' seats. Sent to Meera in Legal.'); rerenderAct(c); });
     b('readNotice', () => openDraft(c, true));
     b('legalOk', () => { S.flow = 3; SirionAPI.approve(c, 'legal'); SirionAPI.sendNotice(c); toast('Notice sent to Zenvault.'); rerenderAct(c); });
     b('toPortal', () => renderSupplier());
-    b('acceptCounter', () => { S.flow = 5; SirionAPI.approve(c, 'procurement'); SirionAPI.createTask(c, 'finance', 'Confirm saving'); toast('Accepted. Finance will confirm once the new order is live.'); rerenderAct(c); });
-    b('pushBack', () => toast('For this demo, 1,350 seats is a fair landing. In the product Priya could reply with a counter.'));
-    b('finOk', () => { S.flow = 6; SirionAPI.confirmSaving(c, 1.574e7); addSaving(1.574e7); toast('₹1.57 Cr a year confirmed. North-star updated.'); rerenderAct(c); });
+    b('noReply', () => { S.reply = 'noreply'; S.flow = 4; SirionAPI.supplierReply(c, 'No reply by 15 Dec'); toast('15 Dec passed with no reply. Back to Priya.'); S.role = 'procurement'; rerenderAct(c); });
+    const next = (rise, msg) => { S.agreedRise = rise; S.flow = 5; SirionAPI.approve(c, 'procurement'); SirionAPI.createTask(c, 'finance', 'Record saving'); toast(msg); rerenderAct(c); };
+    b('settle3', () => next(S.proposedRise, 'Both parts agreed. Sent to Rahul in Finance.'));
+    b('settle5', () => next(5, 'Accepted a 5% rise. Sent to Rahul in Finance.'));
+    b('settle7', () => next(7, 'Call booked. Only the seat cut is secured for now.'));
+    b('settleSeats', () => next(7, 'Seat cut locked in. Sent to Rahul in Finance.'));
+    b('bookCall', () => toast('Call booked with Zenvault about the rise. The seat cut does not wait for it.'));
+    b('finOk', () => { const z = zvSecured(); S.flow = 6; SirionAPI.confirmSaving(c, z.total, 'secured'); S.secured += z.total; toast(MONEY(z.total) + ' a year recorded as secured. It becomes confirmed when the invoice matches.'); rerenderAct(c); });
+    b('zvInvoice', () => { const z = zvSecured(); S.zvConfirmed = true; SirionAPI.confirmSaving(c, z.total); addSaving(z.total); toast(MONEY(z.total) + ' a year confirmed by the January invoice. North-star updated.'); rerenderAct(c); });
   } else {
-    b('demoReply', () => { S.stage[c.id] = 2; SirionAPI.supplierReply(c, 'Agreed, credit note issued'); toast(c.supplier + ' agreed and issued a credit note.'); rerenderAct(c); });
+    b('demoReply', () => { S.stage[c.id] = 2; S.secured += c.save.amount; SirionAPI.supplierReply(c, 'Agreed, credit note issued'); toast(c.supplier + ' agreed and issued a credit note.'); rerenderAct(c); });
     b('demoFin', () => { S.stage[c.id] = 3; SirionAPI.confirmSaving(c, c.save.amount); addSaving(c.save.amount); toast(MONEY(c.save.amount) + ' confirmed by Finance.'); rerenderAct(c); });
   }
 }
 function letterFor(c) {
-  if (c.id === 'zenvault') return `Dear Zenvault team,
+  if (c.id === 'zenvault') return S.letter || `Dear Zenvault team,
 
-Our agreement for IT service desk software (ref. ZV-2024-031) renews on 1 January 2027. Under clause 12.3, we are giving notice to change the number of named users from 2,000 to 1,300 from the renewal date.
+Our agreement for IT service desk software (ref. ZV-2024-031) renews on 1 January 2027. Under clause 12.3, we are giving notice to change the number of named users from 2,000 to ${NUM(S.seats)} from the renewal date.
 
-We also propose that fees for the renewal term rise by 3%, in line with our other software renewals this year, instead of the 7% in clause 12.2.
+We also propose that fees for the renewal term rise by ${S.proposedRise}%, in line with our other software renewals this year, instead of the 7% in clause 12.2.
 
 Please confirm, or suggest a time to discuss, before 15 December 2026.
 
@@ -787,7 +830,7 @@ function openDraft(c, readOnly) {
     <div class="drawer-body">
       <div class="muted" style="font-size:12.5px;margin:14px 0 4px">Why</div><div style="color:var(--text-2)">${c.lede}</div>
       <div class="muted" style="font-size:12.5px;margin:16px 0 4px">The clause that allows it</div><div class="clause" style="border:0;padding:0"><q>${c.clauses[c.clauses.length - 1].text}</q></div>
-      <label for="letter" class="muted" style="display:block;font-size:12.5px;margin:16px 0 6px">Message to the supplier. ${readOnly ? '' : 'Edit anything before you approve.'}</label>
+      <label for="letter" class="muted" style="display:block;font-size:12.5px;margin:16px 0 6px">Message to the supplier. ${readOnly ? '' : 'Your edits are saved when you approve.'}</label>
       <textarea class="letter" id="letter" ${readOnly ? 'readonly' : ''}>${esc(letterFor(c))}</textarea>
     </div>
     <div class="drawer-foot"><div class="muted" style="font-size:12.5px">${c.flow ? 'Next, Arjun confirms the seat count, then Meera in Legal approves before it goes out.' : 'Nothing is sent until you approve. Legal is copied.'}</div>
@@ -802,11 +845,11 @@ function openDraft(c, readOnly) {
   document.addEventListener('keydown', esck);
   sc.onclick = () => close(); $('#drCancel').onclick = () => close();
   const ok = $('#drOk');
-  if (ok) ok.onclick = () => close(() => {
-    if (c.flow) { S.flow = 1; SirionAPI.createTask(c, 'owner', 'Confirm seat count'); toast('Sent to Arjun in IT to confirm seats.'); }
+  if (ok) ok.onclick = () => { if (c.flow) S.letter = $('#letter').value; close(() => {
+    if (c.flow) { S.flow = 1; SirionAPI.createTask(c, 'owner', 'Confirm seat count'); toast('Draft saved. Sent to Arjun in IT to confirm seats.'); }
     else { S.stage[c.id] = 1; SirionAPI.approve(c, 'procurement'); SirionAPI.sendNotice(c); toast('Claim sent to ' + c.supplier + '.'); }
     rerenderAct(c);
-  });
+  }); };
 }
 
 /* ---------------- supplier portal ---------------- */
@@ -829,9 +872,9 @@ function renderSupplier() {
       <div class="pcard">
         <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px;font-size:13.5px"><div style="background:#F4F6F8;border-radius:10px;padding:12px"><b style="display:block;font-size:12px;color:#6B7785;font-weight:500">${p.name.split(' ')[0]} wants</b>${p.wants}</div><div style="background:#F4F6F8;border-radius:10px;padding:12px"><b style="display:block;font-size:12px;color:#6B7785;font-weight:500">And worries about</b>${p.worries}</div></div>
         <div style="font-weight:600;margin-bottom:10px">Your reply</div>
-        ${replied ? `<div style="padding:14px;border-radius:10px;background:#EAF6F4;color:#1F6B5E">You offered 1,350 seats with a 3% rise. Asian Paints will reply here.</div>` : `
+        ${replied ? `<div style="padding:14px;border-radius:10px;background:#EAF6F4;color:#1F6B5E">${S.reply === 'accept' ? `You accepted ${NUM(S.seats)} seats and a ${S.proposedRise}% rise.` : S.reply === 'counter' ? `You accepted ${NUM(S.seats)} seats and offered a 5% rise.` : S.reply === 'call' ? 'You asked for a call.' : 'No reply was sent before 15 Dec.'} Asian Paints will reply here.</div>` : `
         <div role="radiogroup" aria-label="Reply options" style="display:grid;gap:8px">
-          ${[['accept', 'Accept: 1,300 seats with a 3% rise'], ['counter', 'Counter-offer: 1,350 seats with a 3% rise'], ['call', 'Ask for a call before deciding']].map((o, i) => `<button class="opt" role="radio" aria-checked="${i === 1}" data-opt="${o[0]}"><span style="width:16px;height:16px;border-radius:50%;border:2px solid ${i === 1 ? '#92429F' : '#B8C2CC'};margin-top:2px;flex:none"></span><span>${o[1]}</span></button>`).join('')}
+          ${[['accept', `Accept: ${NUM(S.seats)} seats with a ${S.proposedRise}% rise`], ['counter', `Counter-offer: ${NUM(S.seats)} seats with a 5% rise`], ['call', 'Ask for a call before deciding']].map((o, i) => `<button class="opt" role="radio" aria-checked="${i === 1}" data-opt="${o[0]}"><span style="width:16px;height:16px;border-radius:50%;border:2px solid ${i === 1 ? '#92429F' : '#B8C2CC'};margin-top:2px;flex:none"></span><span>${o[1]}</span></button>`).join('')}
         </div>
         <button class="btn primary" id="supSend" style="margin-top:14px;height:40px">Send reply to Asian Paints</button>`}
       </div>`}
@@ -842,20 +885,19 @@ function renderSupplier() {
   $$('[data-opt]').forEach(b => b.onclick = () => { choice = b.dataset.opt; $$('[data-opt]').forEach(x => { const on = x === b; x.setAttribute('aria-checked', on); x.firstElementChild.style.borderColor = on ? '#92429F' : '#B8C2CC'; }); });
   const s = $('#supSend');
   if (s) s.onclick = () => {
-    if (choice !== 'counter') { toast('For this demo, pick the counter-offer so the story continues.'); return; }
-    S.flow = 4; SirionAPI.supplierReply(c, 'Counter: 1,350 seats, +3%'); toast('Reply sent. Back to Priya at Asian Paints.');
-    setTimeout(() => { S.role = 'procurement'; go('c-zenvault'); }, 700);
+    S.reply = choice; S.flow = 4; SirionAPI.supplierReply(c, choice === 'accept' ? 'Accepted' : choice === 'counter' ? 'Counter: 5% rise' : 'Asked for a call'); toast('Reply sent. Back to Priya at Asian Paints.');
+    setTimeout(() => { S.role = 'procurement'; go('c-western'); }, 700);
   };
 }
 
 /* ---------------- is it working ---------------- */
 function renderWorking() {
-  const pct = Math.round(S.confirmed / PORTFOLIO.foundSoFar * 100);
+  const pct = Math.round(S.confirmed / S.found() * 100);
   const sup = [
     ['Flags acted on before the deadline', '78%', '70%+', 'good'],
     ['Flags a person confirms are right', '91%', '85%+', 'good'],
     ['Days from flag to action (median)', '4', '5 or fewer', 'good'],
-    ['Found money confirmed by Finance', pct + '%', '50%+', pct >= 50 ? 'good' : 'watch'],
+    ['Found money confirmed in the books', pct + '%', '35%+', pct >= 35 ? 'good' : 'watch'],
     ['Supplier disputes on our notices', '6%', 'under 15%', 'good']
   ];
   const rethink = [
@@ -869,11 +911,15 @@ function renderWorking() {
     <div class="page-head"><div><h1>Is it working?</h1><div class="muted" style="font-size:13px;margin-top:2px">One number we steer by, the numbers that explain it, and the limits that would make us rethink.</div></div></div>
     <section class="card" style="padding:20px 20px 10px">
       <div style="display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap">
-        <div><div class="pill purple" style="margin-bottom:8px">North-star metric</div><h2 class="h" style="font-size:16px">Money saved or recovered, confirmed by Finance</h2><div class="sub">Counted only when a credit note, refund or lower price shows up in the books.</div></div>
-        <div style="margin-left:auto;text-align:right"><div class="num" id="confirmedNum" style="font-size:40px;letter-spacing:-0.02em">${MONEY(S.confirmed)}</div><div class="muted" style="font-size:12.5px">this year, against a ₹5 Cr target</div></div>
+        <div><div class="pill purple" style="margin-bottom:8px">North-star metric</div><h2 class="h" style="font-size:16px">Money saved or recovered, confirmed in the books</h2><div class="sub">Counted only when a credit note, refund or lower invoice shows up and Finance matches it. Not when we flag it, and not when a supplier agrees.</div></div>
+        <div style="margin-left:auto;text-align:right"><div class="num" id="confirmedNum" style="font-size:40px;letter-spacing:-0.02em">${MONEY(S.confirmed)}</div><div class="muted" style="font-size:12.5px">confirmed this year</div></div>
       </div>
-      <div class="chart" id="nsChart" style="height:240px;margin-top:8px" role="img" aria-label="Confirmed savings running total by month in 2026, reaching ${MONEY(S.confirmed)} in November, against a straight-line target of 5 crore rupees"></div>
+      <div class="chart" id="nsChart" style="height:240px;margin-top:8px" role="img" aria-label="Running totals by month in 2026: confirmed reaching ${MONEY(S.confirmed)} and secured reaching ${MONEY(S.secured)} in November"></div>
     </section>
+    <section class="card" style="margin-top:16px;padding:16px 18px"><h2 class="h">From found to confirmed</h2><div class="sub">Each stage is a smaller number. The gap between them is work still to do.</div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px">
+        ${[['Found', S.found(), 'Flagged, with the clause and the maths', 'rgba(255,255,255,0.35)'], ['Secured', S.secured, 'The contract allows it, or the supplier agreed in writing', '#C98BD3'], ['Confirmed', S.confirmed, 'Credit note, refund or lower invoice, matched by Finance', '#3FA7A0']].map(x => `<div style="border-top:3px solid ${x[3]};padding-top:10px"><div class="muted" style="font-size:12.5px">${x[0]}</div><div class="num" style="font-size:24px;font-weight:600">${MONEY(x[1])}</div><div class="muted" style="font-size:12px;margin-top:2px">${x[2]}</div></div>`).join('')}
+      </div></section>
     <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:16px" class="sups">
       ${sup.map(s => `<div class="card" style="padding:14px 16px"><div class="muted" style="font-size:12.5px;min-height:34px">${s[0]}</div><div class="num" style="font-size:24px;font-weight:600;margin-top:4px">${s[1]}</div><div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:12px"><span class="pill ${s[3] === 'good' ? 'green' : 'amber'}"><i></i>${s[3] === 'good' ? 'On track' : 'Watch'}</span><span class="muted">target ${s[2]}</span></div></div>`).join('')}
     </section>
@@ -886,27 +932,27 @@ function renderWorking() {
     <section class="card" style="margin-top:16px;padding:16px 18px">
       <h2 class="h">How each number is measured</h2>
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 24px;margin-top:10px;color:var(--text-2);font-size:13.5px">
-        <div><b style="color:#fff">Confirmed savings:</b> credit notes, refunds and new purchase orders, matched to a flag and confirmed by a Finance user.</div>
+        <div><b style="color:#fff">Found, secured, confirmed:</b> found is flagged. Secured is allowed by the contract or agreed in writing. Confirmed is a credit note, refund or lower invoice, matched to a flag by a Finance user.</div>
         <div><b style="color:#fff">Acted on in time:</b> a notice, claim or price change approved before the contract's own deadline.</div>
         <div><b style="color:#fff">Flags confirmed right:</b> when someone opens a flag, they mark it right or wrong in one click.</div>
         <div><b style="color:#fff">Disputes:</b> supplier replies in the portal that reject the facts in the notice.</div>
       </div>
     </section>
-    <p class="muted" style="margin:18px 0 0;font-size:12px">Illustrative figures. Approve a saving anywhere in the demo and the north-star number here goes up.</p>
+    <p class="muted" style="margin:18px 0 0;font-size:12px">Illustrative figures. Approving a change moves money from found to secured. It only reaches confirmed when the invoice arrives; try the demo button on the Zenvault page.</p>
   </main>`;
   $('#root').innerHTML = shell('working', center);
   wireShell();
   const M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov'];
-  const data = PORTFOLIO.confirmedByMonth.slice(); data[10] = S.confirmed;
+  const data = PORTFOLIO.confirmedByMonth.slice(); data[10] = S.confirmed; const secd = PORTFOLIO.securedByMonth.slice(); secd[10] = S.secured;
   mkChart($('#nsChart'), {
     grid: { left: 60, right: 16, top: 30, bottom: 28 },
-    legend: { top: 0, right: 0, data: [ch.a.name, ch.b.name], textStyle: { color: '#C9D6D8', fontFamily: 'Hanken Grotesk, system-ui, sans-serif' } },
+    legend: { top: 0, right: 0, data: ['Confirmed in the books', 'Secured, not yet in the books'], textStyle: { color: '#C9D6D8', fontFamily: 'Hanken Grotesk, system-ui, sans-serif' } },
     tooltip: Object.assign({ trigger: 'axis', valueFormatter: v => MONEY(v) }, tipStyle),
     xAxis: { type: 'category', data: M, boundaryGap: false, axisLine: axisStyle.axisLine, axisTick: axisStyle.axisTick, axisLabel: axisStyle.axisLabel },
     yAxis: { type: 'value', splitLine: axisStyle.splitLine, axisLabel: { color: '#8FA3A7', fontSize: 11.5, formatter: v => v ? '₹' + v / 1e7 + ' Cr' : '₹0' } },
     series: [
-      { name: 'Confirmed by Finance', type: 'line', data, symbol: 'circle', symbolSize: 7, lineStyle: { color: '#3FA7A0', width: 2.5 }, itemStyle: { color: '#3FA7A0' }, areaStyle: { color: 'rgba(63,167,160,0.15)' } },
-      { name: 'Target (₹5 Cr a year)', type: 'line', data: M.map((_, i) => 5e7 * (i + 1) / 12), symbol: 'none', itemStyle: { color: 'rgba(245,246,246,0.5)' }, lineStyle: { color: 'rgba(245,246,246,0.4)', type: 'dashed', width: 1.5 } }
+      { name: 'Confirmed in the books', type: 'line', data, symbol: 'circle', symbolSize: 7, lineStyle: { color: '#3FA7A0', width: 2.5 }, itemStyle: { color: '#3FA7A0' }, areaStyle: { color: 'rgba(63,167,160,0.15)' } },
+      { name: 'Secured, not yet in the books', type: 'line', data: secd, symbol: 'none', itemStyle: { color: '#C98BD3' }, lineStyle: { color: '#C98BD3', type: 'dashed', width: 2 } }
     ]
   });
 }
@@ -946,26 +992,26 @@ const QA = [
   { k: ['week', 'do first', 'today', 'should i do'], q: 'What should I do this week?',
     say: 'Two things are urgent. First, Prime Staffing is billing above the agreed rate. Claim eighteen lakh back before the December invoice is paid. Second, give Zenvault notice by the second of December to cut unused seats. That saves about one point seven crore a year.',
     html: () => `Two things this week, then one more before 5 Dec:${rowsList(CONTRACTS.filter(c => !done(c)).sort((a, b) => a.due.days - b.due.days).slice(0, 3))}`,
-    src: ['Clause 12.3, Zenvault, page 11', 'Schedule B, Prime Staffing, page 14'], act: [['Open Zenvault', 'c-zenvault'], ['Open Prime Staffing', 'c-prime']] },
+    src: ['Clause 12.3, Zenvault, page 11', 'Schedule B, Prime Staffing, page 14'], act: [['Open Western Roadways', 'c-western'], ['Open Prime Staffing', 'c-prime']] },
   { k: ['losing', 'most money', 'biggest', 'where am i'], q: 'Where am I losing the most money?',
     say: 'Software. About two point six crore a year above what you need. Zenvault alone is one point seven crore, because it renews at seven percent more and a third of the seats are unused.',
     html: () => `<b>Software</b>: about ${MONEY(2.6e7)} a year. One contract is most of it.${barsList([['Zenvault', 1.68e7], ['Infra monitoring tool', 4.1e6], ['Design software', 2.6e6]])}`,
-    src: ['Zenvault usage report', 'Clause 12.2, Zenvault, page 11'], act: [['Open Zenvault', 'c-zenvault']] },
+    src: ['Zenvault usage report', 'Clause 12.2, Zenvault, page 11'], act: [['Open Western Roadways', 'c-western']] },
   { k: ['renew', 'renewal', '90 days'], q: 'Which contracts renew in the next 90 days?',
     say: 'Forty one contracts renew in the next ninety days. One needs you before it renews: Zenvault, on the first of January, where the price would go up seven percent while a third of the seats sit unused.',
     html: () => `41 renew in the next 90 days. One needs you before it renews:${rowsList([CONTRACTS[0]])}`,
-    src: ['Renewal dates from the Extraction Agent'], act: [['Open Zenvault', 'c-zenvault']] },
+    src: ['Renewal dates from the Extraction Agent'], act: [['Open Western Roadways', 'c-western']] },
   { k: ['zenvault', 'why is'], q: 'Why is Zenvault on the list?',
     say: 'It renews by itself on the first of January at seven percent more. Your team uses one thousand two hundred and forty of the two thousand seats. Cutting to thirteen hundred and capping the rise at three percent saves about one point seven crore a year.',
-    html: () => `It renews by itself on 1 Jan at 7% more, and only 1,240 of 2,000 seats are used. Going to 1,300 seats with a 3% rise saves about <b>${MONEY(1.68e7)} a year</b>.`,
+    html: () => `It renews by itself on 1 Jan at 7% more, and only 1,240 of 2,000 seats are used. Going to 1,300 seats saves <b>${MONEY(1.57e7)} a year</b>, and that is your right under clause 12.3. A 3% rise instead of 7% saves another <b>₹10.9 L</b>, but Zenvault has to agree.`,
     src: ['Clause 12.2 and 12.3, page 11', 'Usage report via IT'], act: [['Cut unused seats', 'c-zenvault']] },
   { k: ['billing', 'billed', 'overcharg', 'wrong'], q: 'Who is billing me wrong?',
     say: 'Seventeen suppliers. The biggest are Prime Staffing at eighteen lakh, Northbridge Advisory at fourteen lakh, and Western Roadways at about eleven lakh.',
     html: () => `17 suppliers. The three biggest:${barsList([['Prime Staffing', 1.82e6], ['Northbridge Advisory', 1.4e6], ['Western Roadways', 1.08e6]])}`,
     src: ['Invoices matched to contracts in Sirion'], act: [['Open Prime Staffing', 'c-prime']] },
   { k: ['saved', 'saving', 'confirmed', 'north'], q: 'How much have we saved this year?',
-    say: () => 'So far this year Finance has confirmed ' + MONEY(S.confirmed).replace('₹', '').replace(' Cr', ' crore') + ' rupees in savings.',
-    html: () => `Finance has confirmed <b>${MONEY(S.confirmed)}</b> this year, ${Math.round(S.confirmed / PORTFOLIO.foundSoFar * 100)}% of what we've found.`,
+    say: () => 'So far this year ' + MONEY(S.confirmed).replace('₹', '').replace(' Cr', ' crore') + ' rupees is confirmed in the books. More is secured and waiting for invoices.',
+    html: () => `Finance has confirmed <b>${MONEY(S.confirmed)}</b> in the books this year, ${Math.round(S.confirmed / S.found() * 100)}% of what we've found. A further <b>${MONEY(S.secured - S.confirmed)}</b> is secured and waiting for invoices.`,
     src: ['Credit notes and purchase orders in Sirion'], act: [['Is it working?', 'working']] }
 ];
 function rowsList(list) { return `<div class="brief" style="margin-top:4px">${list.map(c => `<a href="#c-${c.id}"><span style="width:8px;height:8px;border-radius:50%;background:${c.mark === 'billed' ? '#E0517F' : c.mark === 'sla' ? '#C98BD3' : '#E0A33A'};flex:none"></span><span style="flex:1;min-width:0"><span style="display:block;font-weight:500">${c.supplier}</span><span class="muted" style="font-size:12px">${c.action.verb}</span></span><span class="num" style="font-size:12px">${MONEY(c.save.amount)}</span></a>`).join('')}</div>`; }
@@ -980,6 +1026,7 @@ function askPanel() {
         <div class="glowmove" style="position:absolute;right:-90px;top:-40px;width:260px;height:220px;border-radius:50%;background:radial-gradient(closest-side,rgba(146,66,159,0.55),rgba(146,66,159,0));animation-direction:alternate-reverse"></div>
         <svg class="waves" width="1440" height="160" viewBox="0 0 1440 160" style="position:absolute;left:0;top:0"><g fill="none" stroke="rgba(159,211,216,0.2)" stroke-width="1"><path d="M0,45 C120,20 240,75 360,50 S600,15 720,45 S960,80 1080,50 S1320,15 1440,45"/><path d="M0,85 C120,60 240,115 360,90 S600,55 720,85 S960,120 1080,90 S1320,55 1440,85"/><path d="M0,125 C120,100 240,155 360,130 S600,95 720,125 S960,160 1080,130 S1320,95 1440,125"/></g></svg>
       </div>
+      <button id="askClose" aria-label="Close AskSirion" title="Close" style="position:absolute;right:12px;top:12px;z-index:2;border:0;background:rgba(255,255,255,0.08);color:#E6EEEF;width:28px;height:28px;border-radius:8px;cursor:pointer;display:grid;place-items:center">${I.x}</button>
       <div style="position:relative;display:flex;align-items:center;gap:14px">
         <button class="orbbtn" id="orbBtn" aria-label="Talk to AskSirion" title="Tap to talk">
           <span class="orbring" style="position:absolute;inset:2px;border-radius:50%;border:1.5px solid rgba(159,211,216,0.6)"></span>
@@ -1015,6 +1062,7 @@ function chatHTML(m) {
 }
 function askQuestion(text, ctx) {
   if (!text.trim()) return;
+  if (!S.askOpen && $('.shell')) { S.askOpen = true; disposeCharts(); renderApp(); }
   SirionAPI.ask(text);
   S.chat.push({ me: true, text }); S.chat.push({ typing: true, live: LIVE.ai });
   refreshChat();
@@ -1044,7 +1092,7 @@ function openVoice(startIdx, demo) {
     <div class="caption" id="vA" aria-live="polite"></div>
     <div class="muted" id="vSrc" style="font-size:12px;max-width:50ch"></div>
     <div style="display:flex;gap:10px;margin-top:6px"><button class="btn ghost" id="vNext">Ask another question</button>${live ? '<button class="btn ghost" id="vSample">Play a sample question</button>' : '<button class="btn primary" id="vShow">Show me on screen</button>'}<button class="iconbtn" id="vEnd" aria-label="End voice demo" style="background:#C22E5E;color:#fff;width:42px;height:42px;border-radius:50%">${I.x}</button></div>
-    <div class="muted" style="font-size:11.5px;max-width:46ch">${live ? 'Speak now. Your words are turned into text by your browser, answered by Claude with live web search, and read aloud.' : 'Voice demo: the questions are pre-written because this browser or page can\'t use your microphone. Answers are spoken aloud by your browser.'}</div>
+    <div class="muted" style="font-size:11.5px;max-width:46ch">${live ? 'Speak now. Your browser turns your words into text, AskSirion answers from the contracts and this week\'s headlines, and your browser reads the answer aloud.' : 'Voice demo: the questions are pre-written because this browser or page can\'t use your microphone. Answers are spoken aloud by your browser.'}</div>
   </div></div>`;
   const end = () => { clearVoice(); stopListen(); root.innerHTML = ''; document.removeEventListener('keydown', esck); };
   const esck = (e) => { if (e.key === 'Escape') end(); };
@@ -1131,8 +1179,8 @@ const WALK = [
   { r: 'overview', spot: '#nums', c: 'Four numbers: extra paid this month, what you can still save, how many contracts need fixing, and what Finance has confirmed.' },
   { r: 'overview', spot: '#chart-card', c: 'The gap grows every month that signed prices stand still while reality moves.' },
   { r: 'overview', spot: '#todo', c: 'Most urgent first. Each row says what\'s wrong and the one thing to do.' },
-  { r: 'c-zenvault', c: 'Zenvault renews on its own at 7% more while 38% of seats sit unused. The fix needs five people.' },
-  { r: 'c-zenvault', menu: true, c: '"View as" switches between Procurement, IT, Legal, the supplier and Finance, so you can walk one contract through everyone.' },
+  { r: 'c-western', c: 'Western Roadways still charges last year\'s fuel rate although diesel got cheaper. About ₹10.8 L can come back, and the contract renews soon.' },
+  { r: 'c-western', menu: true, c: 'Each step waits on a different person. Use the flow card, or your avatar at the top right, to switch user and walk one contract through everyone.' },
   { r: 'overview', voice: true, c: 'AskSirion answers by typing or voice, and always shows the contract page it used.' },
   { r: 'working', c: 'Success is one number: money Finance confirms. Plus clear limits that would make us rethink.' }
 ];
@@ -1188,6 +1236,8 @@ function wireShell() {
   if (nt) nt.onclick = () => startTour();
   if (nn) nn.onclick = () => { S.heroSeen = false; if (location.hash.slice(1) !== 'overview') go('overview'); else { disposeCharts(); renderApp(); } };
   $$('[data-scroll]').forEach(a => a.onclick = (e) => { e.preventDefault(); const id = a.dataset.scroll; if (location.hash.slice(1) !== 'overview') { go('overview'); setTimeout(() => { const t = $('#' + id); if (t) t.scrollIntoView({ block: 'start' }); }, 120); } else { const t = $('#' + id); if (t) t.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' }); } });
+  const fab = $('#askFab'); if (fab) fab.onclick = () => { S.askOpen = true; disposeCharts(); renderApp(); setTimeout(() => { const i = $('#askIn'); if (i) i.focus(); }, 60); };
+  const ac = $('#askClose'); if (ac) ac.onclick = () => { S.askOpen = false; disposeCharts(); renderApp(); };
   const ob = $('#orbBtn'), mb = $('#micBtn');
   if (ob) ob.onclick = () => openVoice(0); if (mb) mb.onclick = () => openVoice(0);
   const f = $('#askForm'); if (f) f.onsubmit = (e) => { e.preventDefault(); const i = $('#askIn'); const v = i.value; i.value = ''; askQuestion(v); };
@@ -1337,7 +1387,7 @@ function liveAnswerHTML(m) {
 
 /* ---------- voice: real microphone ---------- */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-const canListen = () => !!SR && LIVE.ai && window.isSecureContext;
+const canListen = () => !!SR && window.isSecureContext;
 let rec = null;
 function speak(said, onWord, onEnd) {
   try {
@@ -1358,13 +1408,15 @@ function liveListen() {
   rec = new SR(); rec.lang = 'en-IN'; rec.interimResults = true; rec.maxAlternatives = 1;
   let final = '';
   rec.onresult = (e) => { let t = ''; for (const r of e.results) t += r[0].transcript; q.textContent = t; if (e.results[e.results.length - 1].isFinal) final = t; };
-  rec.onerror = (e) => { st.textContent = e.error === 'not-allowed' ? 'Microphone blocked' : 'Didn\'t catch that'; wv.classList.add('idle');
-    a.innerHTML = `<span class="unsaid">${e.error === 'not-allowed' ? 'Allow the microphone in your browser, or try a sample question.' : 'Tap "Ask another question" and try again.'}</span>`; };
+  rec.onerror = (e) => { const blocked = e.error === 'not-allowed' || e.error === 'service-not-allowed'; st.textContent = blocked ? 'Microphone blocked' : e.error === 'audio-capture' ? 'No microphone found' : 'Didn\'t catch that'; wv.classList.add('idle');
+    a.innerHTML = `<span class="unsaid">${blocked ? (window.self !== window.top ? 'This page is inside a frame, and browsers block the microphone there. Open it in its own browser tab.' : 'Click the lock icon next to the address bar, set Microphone to Allow, then reload this page. Or tap "Play a sample question".') : e.error === 'audio-capture' ? 'Plug in or turn on a microphone, then try again.' : 'Tap "Ask another question" and try again.'}</span>`; };
   rec.onend = async () => {
     if (!final.trim()) { if (st.textContent === 'Listening') { st.textContent = 'Didn\'t catch that'; wv.classList.add('idle'); } return; }
     st.textContent = 'Thinking'; wv.classList.add('idle'); a.innerHTML = '<span class="unsaid">Checking your contracts and the web…</span>';
     try {
-      const j = await liveAsk(final, { voice: true });
+      let j = null;
+      if (LIVE.ai) { try { j = await liveAsk(final, { voice: true }); } catch (err) { if (err.code === 'rate_limited') throw err; } }
+      if (!j) { const qa = findQA(final); j = { text: qa ? (typeof qa.say === 'function' ? qa.say() : qa.say) : 'I can answer questions about the contracts in this demo. Try asking which contract needs attention first, or what Zenvault means for us.', sources: [], searches: [] }; }
       const said = j.text.replace(/\*\*/g, '');
       st.textContent = 'Speaking'; orb.classList.add('talking'); wv.classList.remove('idle');
       a.innerHTML = `<span class="unsaid">${esc(said)}</span>`;

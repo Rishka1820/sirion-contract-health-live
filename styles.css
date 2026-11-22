@@ -530,3 +530,16 @@ details.work summary{cursor:pointer;color:var(--teal-l);font-size:13.5px}
 a.srcchip{text-decoration:none;color:var(--mist)}a.srcchip:hover{color:#fff}
 @media (max-width:900px){.mw-body{grid-template-columns:minmax(0,1fr)}.mw-why{border-left:0;border-top:1px solid var(--line)}}
 @media (prefers-reduced-motion:reduce){.livepill i,.mw-skel span{animation:none}}
+
+.shell.ask-closed{grid-template-columns:220px minmax(0,1fr)}
+.shell.ask-closed .ask{display:none}
+.askfab{position:fixed;right:20px;bottom:20px;z-index:40;display:flex;align-items:center;gap:10px;height:48px;padding:0 18px 0 10px;border-radius:999px;border:1px solid rgba(159,211,216,0.35);background:#10242E;color:#F5F6F6;font:600 14px var(--sans);cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,0.45)}
+.askfab:hover{border-color:rgba(201,139,211,0.7)}
+@media (max-width:1240px){.shell.ask-closed{grid-template-columns:minmax(0,1fr)}}
+
+.search{margin-left:0;width:340px}
+.viewas{margin-left:auto}
+.viewas > button.acct{padding:0;border:0;background:transparent;height:auto;border-radius:50%}
+.viewas > button.acct:hover .av{box-shadow:0 0 0 2px rgba(159,211,216,0.45)}
+
+.more{margin-top:16px}.more>summary{cursor:pointer;list-style:none;padding:12px 4px;font-size:13.5px;color:var(--text-2);font-weight:500}.more>summary::before{content:"+ ";color:var(--teal-l,#7FD3CC)}.more[open]>summary::before{content:"\2212 "}.more>summary::-webkit-details-marker{display:none}
