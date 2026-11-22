@@ -545,3 +545,12 @@ a.srcchip{text-decoration:none;color:var(--mist)}a.srcchip:hover{color:#fff}
 .more{margin-top:16px}.more>summary{cursor:pointer;list-style:none;padding:12px 4px;font-size:13.5px;color:var(--text-2);font-weight:500}.more>summary::before{content:"+ ";color:var(--teal-l,#7FD3CC)}.more[open]>summary::before{content:"\2212 "}.more>summary::-webkit-details-marker{display:none}
 
 .askfab{background:linear-gradient(135deg,#92429F,#6E2F7A);border-color:transparent;height:54px;padding:0 22px 0 12px;font-size:15px;box-shadow:0 12px 32px rgba(110,47,122,.45)}.askfab:hover{border-color:rgba(255,255,255,.4)}
+
+.bigorb-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding:28px 4px 8px}
+.bigorb{position:relative;width:132px;height:132px;border:0;background:transparent;padding:0;cursor:pointer;border-radius:50%;animation:orbfloat 6s ease-in-out infinite}
+.bigorb .orbcore{position:absolute;inset:10px;width:auto;height:auto;border-radius:50%}
+.bigorb .orbring{position:absolute;inset:4px;border-radius:50%;border:1.5px solid rgba(159,211,216,.55)}
+.bigorb .orbring+.orbring{border-color:rgba(201,139,211,.55)}
+.bigorb:hover .orbcore{filter:brightness(1.12)}
+@keyframes orbfloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.04)}}
+@media (prefers-reduced-motion:reduce){.bigorb{animation:none}}

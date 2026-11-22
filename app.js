@@ -1030,10 +1030,8 @@ function askPanel() {
       </div>
     </div>
     <div class="ask-body" id="askBody">
-      <div><div class="muted" style="font-size:12px;font-weight:500;margin-bottom:8px">Today's brief</div>
-        <div class="brief">${todo.map(c => `<a href="#c-${c.id}"><span style="width:8px;height:8px;border-radius:50%;background:${c.mark === 'billed' ? '#E0517F' : c.mark === 'sla' ? '#C98BD3' : '#E0A33A'};flex:none"></span><span style="flex:1;min-width:0"><span style="display:block;font-size:13px;font-weight:500">${c.supplier}</span><span class="muted" style="font-size:12px">${c.action.verb}</span></span>${duePill(c.due).replace(' days left', 'd')}</a>`).join('') || '<div style="padding:12px" class="muted">Nothing urgent. Nice.</div>'}</div></div>
-      <div><div class="muted" style="font-size:12px;font-weight:500;margin-bottom:8px">Try asking</div>
-        <div style="display:flex;flex-direction:column;gap:6px">${QA.slice(0, 3).map(x => `<button class="ask-q" data-q="${esc(x.q)}"><span style="color:var(--purple-l);display:flex">${I.spark}</span>${x.q}</button>`).join('')}</div></div>
+      ${S.chat.length ? '' : `<div class="bigorb-wrap"><button class="bigorb" id="bigOrb" aria-label="Talk to AskSirion"><span class="orbring"></span><span class="orbring" style="animation-delay:1.3s"></span><span class="orb orbcore"><span class="orbsheen"></span></span></button><div style="font-size:15px;font-weight:500;margin-top:18px">How can I help?</div><div class="muted" style="font-size:12.5px;margin-top:4px">Type below, or tap the orb to talk.</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:18px;width:100%">${QA.slice(0, 3).map(x => `<button class="ask-q" data-q="${esc(x.q)}"><span style="color:var(--purple-l);display:flex">${I.spark}</span>${x.q}</button>`).join('')}</div></div>`}
       <div id="chatLog" style="display:flex;flex-direction:column;gap:12px">${S.chat.map(chatHTML).join('')}</div>
     </div>
     <div class="ask-foot">
@@ -1230,6 +1228,8 @@ function wireShell() {
   const ac = $('#askClose'); if (ac) ac.onclick = () => { S.askOpen = false; disposeCharts(); renderApp(); };
   const ob = $('#orbBtn'), mb = $('#micBtn');
   if (ob) ob.onclick = () => openVoice(0); if (mb) mb.onclick = () => openVoice(0);
+  const bo = $('#bigOrb'); if (bo) bo.onclick = () => openVoice(0);
+  if (S.askOpen) { const ai = $('#askIn'); if (ai && document.activeElement !== ai && !$('#tourtip')) setTimeout(() => ai.focus({ preventScroll: true }), 50); }
   const f = $('#askForm'); if (f) f.onsubmit = (e) => { e.preventDefault(); const i = $('#askIn'); const v = i.value; i.value = ''; askQuestion(v); };
   $$('.ask-body [data-q]').forEach(b => b.onclick = () => askQuestion(b.dataset.q));
   refreshChat();
