@@ -186,8 +186,8 @@ function renderStory() {
       <div class="story-wrap">
         <div class="rise cpill"><span class="newdot"></span>New in Sirion<span class="newsep"></span><b>Contract health</b></div>
         <h1 class="rise" style="animation-delay:.1s">Your contract repository just got smarter.</h1>
-        <p class="lead rise" style="animation-delay:.2s">Every morning it rereads each signed supplier contract, checks it against invoices, usage, prices and service levels, and tells the right person what to fix before the deadline passes.</p>
-        <div class="rise ctas" style="animation-delay:.3s;display:flex;gap:12px;margin-top:30px;flex-wrap:wrap"><a class="btn primary big" href="#signin">Open the live product <span class="arr">→</span></a><a class="btn outline big" href="#sec-video">Watch the 90-second video <span class="arr">→</span></a></div>
+        <p class="lead rise" style="animation-delay:.2s">Every morning it rereads each signed supplier contract, checks it against invoices and market prices, and tells the right person what to fix before the deadline passes.</p>
+        <div class="rise ctas" style="animation-delay:.3s;display:flex;gap:12px;margin-top:30px;flex-wrap:wrap"><a class="btn primary big" href="#signin">Open the live product <span class="arr">→</span></a><a class="btn outline big" href="#sec-video">Watch the 2-minute video <span class="arr">→</span></a></div>
         <div class="rise heroframe" style="animation-delay:.45s"><div class="hf-in">
           <div class="hf-cell"><span>Demo company</span><b>Asian Paints</b><em>illustrative</em></div>
           <div class="hf-cell"><span>Service suppliers in scope</span><b class="num">2,500</b><em>in scope</em></div>
@@ -200,8 +200,8 @@ function renderStory() {
     <section class="sec" id="sec-video"><div class="story-wrap">
       <div class="sec-num">Start here</div>
       <h2>Why read, when you can see!</h2>
-      <p class="body">A 90-second tour of the product, with captions. No sound needed.</p>
-      <div class="videobox"><video id="walkVideo" src="walkthrough.mp4" poster="poster.jpg" controls playsinline muted preload="metadata" aria-label="90-second walkthrough of Contract health"></video></div>
+      <p class="body">A two-minute tour of the product, with voiceover.</p>
+      <div class="videobox"><video id="walkVideo" src="walkthrough.mp4" poster="poster.jpg" controls playsinline preload="metadata" aria-label="Two-minute walkthrough of Contract health"></video></div>
       <p class="muted" style="font-size:13px;margin-top:10px">Prefer to drive? <a href="#walkthrough">Play the same tour live inside the product</a>, or <a href="#signin">open it and click around</a>.</p>
     </div></section>
 
@@ -460,7 +460,7 @@ function renderSignin() {
     <section class="right">
       <div style="width:min(380px,100%)">
         <h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.02em">Sign in</h1>
-        <p style="margin:6px 0 24px;color:#4D565D">Judging this case? Use the demo, no account needed.</p>
+        <p style="margin:6px 0 24px;color:#4D565D">Want to look around? Use the demo. No account needed.</p>
         <button class="btn primary w100" id="demoIn">Try the demo as Priya</button>
         <p style="margin:8px 0 0;font-size:12.5px;color:#6B7479">Priya Sharma, procurement manager at Asian Paints. You can switch to other people inside.</p>
         <div style="display:flex;align-items:center;gap:12px;margin:26px 0 20px;font-size:12.5px;color:#6B7479"><span style="flex:1;height:1px;background:#E3E9EA"></span>or sign in to your company<span style="flex:1;height:1px;background:#E3E9EA"></span></div>
@@ -812,9 +812,7 @@ Procurement, Asian Paints`;
 
 We have reviewed our agreement (ref. ${c.ref}) against recent invoices. ${c.problem}
 
-${c.work}
-
-Under the terms of our agreement, please issue a credit for this amount and apply the correct terms from your next invoice.
+The difference comes to ${MONEY(c.save.amount)}, under ${c.clauses[0].ref.split(',')[0]} of our agreement. Please issue a credit for this amount and apply the correct terms from your next invoice.
 
 Regards,
 Priya Sharma
