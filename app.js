@@ -177,7 +177,7 @@ function renderStory() {
   $('#root').innerHTML = `
   <div class="story view">
     <header class="story-nav">
-      <div class="brand"><span class="av" style="background:var(--teal);border-radius:7px">${I.chart}</span>Contract health <span class="muted" style="font-weight:400;font-size:12.5px">A Sirion case study</span></div>
+      <div class="brand"><span class="av" style="background:var(--teal);border-radius:7px">${I.chart}</span>Contract health <span class="muted" style="font-weight:400;font-size:12.5px">by Sirion</span></div>
       <nav aria-label="Sections"><a href="#sec-video">Watch</a><a href="#sec-stage">Product</a><a href="#sec-tech">Tech</a></nav>
       <div style="margin-left:auto;display:flex;gap:8px"><a class="btn primary" href="#signin">Open the live product</a></div>
     </header>
@@ -205,7 +205,7 @@ function renderStory() {
       <p class="muted" style="font-size:13px;margin-top:10px">Prefer to drive? <a href="#walkthrough">Play the same tour live inside the product</a>, or <a href="#signin">open it and click around</a>.</p>
     </div></section>
 
-    ${part("Let's talk product", 'What we built, for whom, and why')}
+    ${part("Let's talk product", 'What I built, for whom, and why')}
 
     <section class="sec" id="sec-stage"><div class="story-wrap">
       ${secHead('sec-stage', 'The stage', 'Which stage?', 'The brief offers three stages: intake, negotiation and the intelligent repository. I picked the <b>intelligent repository</b>, the stage after a contract is signed.')}
@@ -227,7 +227,7 @@ function renderStory() {
     </div></section>
 
     <section class="sec" id="sec-who"><div class="story-wrap">
-      ${secHead('sec-who', 'The people', 'Who are we building for?', 'Many people touch a supplier contract. The closer to the centre, the more the product changes their day. Click anyone to see what they want and who they clash with.')}
+      ${secHead('sec-who', 'The people', 'Who is it for?', 'Many people touch a supplier contract. The closer to the centre, the more the product changes their day. Click anyone to see what they want and who they clash with.')}
       <div class="pim" id="pim"></div>
       <div class="pim-wrap">
         <div class="pim-detail" id="stakedetail"></div>
@@ -236,14 +236,14 @@ function renderStory() {
     </div></section>
 
     <section class="sec" id="sec-pain"><div class="story-wrap">
-      ${secHead('sec-pain', 'The pain', 'What hurts them most, and what do we fix first?', '')}
+      ${secHead('sec-pain', 'The pain', 'What hurts them most, and what do I fix first?', '')}
       <div class="painlist">
         ${[['procurement', 'Can\'t reread 2,500 contracts. Finds problems only after the invoice is paid, or after the renewal date has passed.'], ['owner', 'Is asked to cut costs, but has no clear view of what the team actually uses.'], ['legal', 'Gets rushed notices days before a deadline, with no clause references.'], ['finance', 'Sees "savings" claimed that never show up in the books.'], ['supplier', 'Gets vague complaints instead of clear requests it can act on.']].map(p => { const x = PEOPLE[p[0]]; return `<div class="pain"><span class="av" style="width:28px;height:28px;background:${x.color}">${x.initials}</span><div><b>${x.role.replace(' (business owner)', '').replace(', Zenvault', ' (supplier)')}</b><span>${p[1]}</span></div></div>`; }).join('')}
       </div>
-      <h3 class="h3">How we decided what to fix first</h3>
-      <p class="body">We scored each kind of drift on four questions: how much money is at stake, how often it happens, how reliably we can catch it from the data, and whether Procurement can fix it without a long negotiation. Only one comes first. The rest are on the roadmap.</p>
+      <h3 class="h3">How I decided what to fix first</h3>
+      <p class="body">I scored each kind of drift on four questions: how much money is at stake, how often it happens, how reliably it can be caught from the data, and whether Procurement can fix it without a long negotiation. Only one comes first. The rest are on the roadmap.</p>
       <div class="grid2" style="margin-top:12px;align-items:start">
-        <div class="card" style="padding:14px 14px 6px"><div style="font-weight:600;font-size:14px">Money at stake vs how reliably we can catch it</div><div class="muted" style="font-size:12.5px">Bigger circle: happens more often</div><div id="prioChart" style="height:300px" role="img" aria-label="Chart of six kinds of drift. Auto-renewals and billing above agreed rates are high money and easy to catch. Prices above market with no clause are hard to catch."></div></div>
+        <div class="card" style="padding:14px 14px 6px"><div style="font-weight:600;font-size:14px">Money at stake vs how reliably it can be caught</div><div class="muted" style="font-size:12.5px">Bigger circle: happens more often</div><div id="prioChart" style="height:300px" role="img" aria-label="Chart of six kinds of drift. Auto-renewals and billing above agreed rates are high money and easy to catch. Prices above market with no clause are hard to catch."></div></div>
         <div class="card" style="overflow:hidden"><table class="t"><thead><tr><th>Kind of drift</th><th>Money a year</th><th>Catch it reliably?</th><th>Priority</th></tr></thead><tbody>
           ${[['Auto-renewals and rate resets before the notice deadline', '₹2.6 Cr', 'Yes: dates and terms in the contract', 'First release', 'green'], ['Billed above agreed rates', '₹1.9 Cr', 'Yes: invoice vs rate card', 'Next', 'amber'], ['Price links not applied (fuel, raw materials)', '₹1.0 Cr', 'Yes: named index', 'Next', 'amber'], ['Rises above a price cap', '₹0.8 Cr', 'Yes: named index', 'Next', 'amber'], ['Missed service levels', '₹0.5 Cr', 'Partly: needs delivery data', 'Later', 'grey'], ['Above market, no clause to point to', 'Not counted', 'Hard: needs benchmarks', 'Later', 'grey']].map(r => `<tr style="cursor:default"><td>${r[0]}</td><td class="num">${r[1]}</td><td class="muted">${r[2]}</td><td><span class="pill ${r[4]}">${r[3]}</span></td></tr>`).join('')}
         </tbody></table></div>
@@ -264,19 +264,19 @@ function renderStory() {
     </div></section>
 
     <section class="sec" id="sec-right"><div class="story-wrap">
-      ${secHead('sec-right', 'The proof', 'Have we built it right? What would say otherwise?', '')}
+      ${secHead('sec-right', 'The proof', 'Have I built it right? What would say otherwise?', '')}
       <div class="grid2" style="margin-top:8px">
-        <div class="stat"><div class="muted" style="font-size:12.5px">The one number we steer by</div><b style="font-size:26px;margin-top:4px;line-height:1.2">Money saved or won back, confirmed by Finance</b><p>Three stages, so nothing is counted early: <b style="color:#fff">found</b> (flagged), <b style="color:#fff">secured</b> (the contract allows it, or the supplier agreed in writing) and <b style="color:#fff">confirmed</b> (a credit note, refund or lower invoice is in the books). The headline is confirmed only.</p><a href="#working">See it live in the product ↗</a></div>
-        <div class="stat"><div class="muted" style="font-size:12.5px">How we'll know it works</div>
+        <div class="stat"><div class="muted" style="font-size:12.5px">The one number I steer by</div><b style="font-size:26px;margin-top:4px;line-height:1.2">Money saved or won back, confirmed by Finance</b><p>Three stages, so nothing is counted early: <b style="color:#fff">found</b> (flagged), <b style="color:#fff">secured</b> (the contract allows it, or the supplier agreed in writing) and <b style="color:#fff">confirmed</b> (a credit note, refund or lower invoice is in the books). The headline is confirmed only.</p><a href="#working">See it live in the product ↗</a></div>
+        <div class="stat"><div class="muted" style="font-size:12.5px">How I'll know it works</div>
           <div class="metric-row" style="border-top:0"><span>Flags acted on before the deadline</span><span class="muted">Aim</span><b class="num">70%+</b></div>
           <div class="metric-row"><span>Flags a person says are right</span><span class="muted">Aim</span><b class="num">85%+</b></div>
           <div class="metric-row"><span>Days from flag to action</span><span class="muted">Aim</span><b class="num">5 or fewer</b></div>
           <div class="metric-row"><span>Found money that Finance confirms</span><span class="muted">Aim</span><b class="num">50%+</b></div>
         </div>
       </div>
-      <h3 class="h3">What would tell us we're wrong</h3>
+      <h3 class="h3">What would tell me I'm wrong</h3>
       <div class="grid3">
-        <div class="reason"><h3>Too many false flags</h3><p>People reject more than 1 in 5 flags for two months. The checks are noise, and we fix them before anything else.</p></div>
+        <div class="reason"><h3>Too many false flags</h3><p>People reject more than 1 in 5 flags for two months. The checks are noise, and I fix them before anything else.</p></div>
         <div class="reason"><h3>Flags, but no action</h3><p>Fewer than half of flags are acted on before the deadline. Then the problem is who owns the work, not finding it.</p></div>
         <div class="reason"><h3>Found, but never banked</h3><p>Under 25% of found money is confirmed after two quarters. Suppliers are pushing back, or the savings were never real.</p></div>
       </div>
@@ -294,7 +294,7 @@ function renderStory() {
     ${part("Let's talk tech", 'The hard parts, and how the pieces fit')}
 
     <section class="sec" id="sec-tech"><div class="story-wrap">
-      ${secHead('sec-tech', 'The hard parts', 'What are the major tech challenges, and how do we tackle them?', '')}
+      ${secHead('sec-tech', 'The hard parts', 'What are the major tech challenges, and how do I tackle them?', '')}
       <div class="challenges">
         ${[
           ['Reading price terms correctly', 'Prices hide in schedules, formulas and later amendments.', 'Use Sirion\'s Extraction Agent, show the clause and page next to every number, and ask a person to confirm a term the first time it is used.'],
@@ -305,7 +305,7 @@ function renderStory() {
           ['AI making things up', 'One wrong number and nobody trusts the product.', 'AI reads and drafts. Plain code does all the maths. Every claim links to the clause, invoice or feed it came from.'],
           ['Who can see what', 'Suppliers, Legal and Finance need different views.', 'Use Sirion\'s existing permissions. Suppliers see only their own notice.'],
           ['Checking 2,500 contracts every day', 'Rechecking everything nightly is slow and costly.', 'Recheck only what changed (a new invoice, a new price, a date getting close), and do a full check once a week.']
-        ].map(c => `<div class="chal"><b>${c[0]}</b><div><span class="ck">The problem</span>${c[1]}</div><div><span class="ck">How we handle it</span>${c[2]}</div></div>`).join('')}
+        ].map(c => `<div class="chal"><b>${c[0]}</b><div><span class="ck">The problem</span>${c[1]}</div><div><span class="ck">How I handle it</span>${c[2]}</div></div>`).join('')}
       </div>
     </div></section>
 
@@ -343,7 +343,7 @@ function renderStory() {
       <a class="btn primary big" href="#signin">Open the live product <span class="arr">→</span></a>
     </div></section>
 
-    <footer class="story-foot"><div class="story-wrap">Illustrative data for a case study. A company like Asian Paints is used as an example persona; suppliers, people and numbers are made up. Built by Rishika Srivastava for the Sirion case assessment.</div></footer>
+    <footer class="story-foot"><div class="story-wrap">Contract health. Suppliers, people and amounts shown are sample data. Built by Rishika Srivastava.</div></footer>
   </div>`;
   renderStakeMap('procurement');
   prioChart($('#prioChart'));
@@ -391,13 +391,13 @@ function wireTiles() {
 }
 
 const STAKE = {
-  procurement: { ring: 0, tag: 'We build for', x: 50, y: 84, p: PEOPLE.procurement, gives: 'A short list each morning of contracts that drifted, the money at stake, the deadline, and a ready draft.' },
+  procurement: { ring: 0, tag: 'The core users', x: 50, y: 84, p: PEOPLE.procurement, gives: 'A short list each morning of contracts that drifted, the money at stake, the deadline, and a ready draft.' },
   owner: { ring: 1, tag: 'Must say yes', x: 68.5, y: 66, p: PEOPLE.owner, gives: 'A say before anything changes. They confirm seats or service levels before a notice is drafted.' },
   legal: { ring: 1, tag: 'Must say yes', x: 50, y: 50, p: PEOPLE.legal, gives: 'Every notice quotes the exact clause, page and deadline. Nothing goes out without their approval.' },
   finance: { ring: 1, tag: 'Decides if it worked', x: 31.5, y: 66, p: PEOPLE.finance, gives: 'Savings count only when they confirm them, so the product matches the books.' },
   cpo: { ring: 2, tag: 'Pays for it', x: 21, y: 40, p: { name: 'Chief Procurement Officer', role: 'Sponsor', initials: 'CPO', color: '#4D565D', wants: 'Lower supplier costs she can show the board each quarter.', worries: 'Paying for another tool her team ignores.' }, gives: 'One number she can trust: money saved or won back, confirmed by Finance.' },
   supplier: { ring: 2, tag: 'On the other side', x: 79, y: 40, p: PEOPLE.supplier, gives: 'A clear request that quotes the clause, and a simple page to reply or counter-offer.' },
-  ap: { ring: 3, tag: 'Not building for, yet', x: 50, y: 7, p: { name: 'Accounts payable', role: 'Invoice processing', initials: 'AP', color: '#3A464D', wants: 'Invoices paid on time without disputes.', worries: 'More invoices held for checking.' }, gives: 'Nothing new in this version. Invoice processing already has its own tools; we only read the invoices.' }
+  ap: { ring: 3, tag: 'Not building for, yet', x: 50, y: 7, p: { name: 'Accounts payable', role: 'Invoice processing', initials: 'AP', color: '#3A464D', wants: 'Invoices paid on time without disputes.', worries: 'More invoices held for checking.' }, gives: 'Nothing new in this version. Invoice processing already has its own tools; only the invoices are read.' }
 };
 const CLASHES = [
   ['procurement', 'Cut the seats nobody uses', 'owner', "Don't break tools my team needs", 'Arjun confirms the seat count before any notice is drafted.'],
@@ -455,7 +455,7 @@ function renderSignin() {
         <div style="font-size:42px;line-height:1.08;font-weight:300;letter-spacing:-0.025em">Know which signed contracts have drifted, and fix them in time.</div>
         <p style="margin:14px 0 0;font-size:16px;color:#C9D6D8;line-height:1.55">For procurement, legal and finance teams using Sirion.</p>
       </div>
-      <a href="#story" style="position:relative;margin-top:28px;font-size:13px">Read the case story first</a>
+      <a href="#story" style="position:relative;margin-top:28px;font-size:13px">Read about the product first</a>
     </section>
     <section class="right">
       <div style="width:min(380px,100%)">
@@ -493,7 +493,7 @@ function shell(active, centerHTML) {
         <a href="#integrations" ${active === 'integrations' ? 'aria-current="page"' : ''}>${I.plug}Integrations</a>
       </nav>
       <nav class="nav" aria-label="Help" style="margin-top:auto">
-        <a href="#story">${I.book}Case story</a>
+        <a href="#story">${I.book}About the product</a>
         <button id="navNew"><span style="color:var(--purple-l);display:flex">${I.spark}</span>What's new</button>
         <button id="navTour">${I.help}Take the tour</button>
         <a href="#walkthrough">${I.play}Play walkthrough</a>
@@ -871,7 +871,7 @@ function renderSupplier() {
         </div>
         <button class="btn primary" id="supSend" style="margin-top:14px;height:40px">Send reply to Asian Paints</button>`}
       </div>`}
-      <p style="font-size:12px;color:#6B7785;margin-top:20px">Illustrative supplier view for a case study.</p>
+      <p style="font-size:12px;color:#6B7785;margin-top:20px">Sample supplier view.</p>
     </main></div>`;
   wireRoleSet();
   let choice = 'counter';
@@ -917,7 +917,7 @@ function renderWorking() {
       ${sup.map(s => `<div class="card" style="padding:14px 16px"><div class="muted" style="font-size:12.5px;min-height:34px">${s[0]}</div><div class="num" style="font-size:24px;font-weight:600;margin-top:4px">${s[1]}</div><div style="margin-top:6px;display:flex;align-items:center;gap:6px;font-size:12px"><span class="pill ${s[3] === 'good' ? 'green' : 'amber'}"><i></i>${s[3] === 'good' ? 'On track' : 'Watch'}</span><span class="muted">target ${s[2]}</span></div></div>`).join('')}
     </section>
     <section class="card" style="margin-top:16px;overflow:hidden">
-      <div style="padding:14px 18px 10px"><h2 class="h">What would make us rethink</h2><div class="sub">If any of these trips, we stop adding features and fix the cause first.</div></div>
+      <div style="padding:14px 18px 10px"><h2 class="h">What would make me rethink</h2><div class="sub">If any of these trips, I stop adding features and fix the cause first.</div></div>
       <table class="t"><thead><tr><th>We'd rethink if</th><th>We watch</th><th>Now</th><th>Status</th></tr></thead><tbody>
         ${rethink.map(r => `<tr style="cursor:default"><td>${r[0]}</td><td class="muted">${r[1]}</td><td class="num">${r[2]}</td><td><span class="pill ${r[3] === 'ok' ? 'green' : 'amber'}"><i></i>${r[3] === 'ok' ? 'Fine' : 'Close to the limit'}</span></td></tr>`).join('')}
       </tbody></table>
