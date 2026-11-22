@@ -1,0 +1,7 @@
+{
+  "name": "contract-health",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Contract health: a Sirion case prototype with live news, prices and AskSirion.",
+  "engines": { "node": ">=20" }
+}
