@@ -251,12 +251,12 @@ function renderStory() {
     </div></section>
 
     <section class="sec" id="sec-solve"><div class="story-wrap">
-      ${secHead('sec-solve', 'The fix', 'The problem and the solution, in depth', '')}
+      ${secHead('sec-solve', 'The fix', 'The problem and how it is solved', '')}
       <h3 class="h3" style="margin-top:4px">The problem</h3>
       <p class="quote">A supplier's fuel charge stays at last year's rate while diesel gets cheaper, and the contract renews by itself in 13 days. Nobody notices until the invoice arrives.</p>
       <p class="body">A supplier contract is priced on the day it is signed, but market rates and invoices keep moving. Notice windows are short, the person who signed has often moved on, and nobody checks the invoice against the contract. Across 2,500 suppliers this adds up to crores a year in overcharges and renewals nobody chose. Contract health closes that gap. Each morning it compares every contract with what the supplier bills and what the market does, and gives the right person one clear action. Software licences come later as an add-on, because they need usage data that companies don't always share.</p>
       <div class="lightcard evcard"><div class="ev-h"><h3>Independent research says the same</h3><p class="muted">Value leaks after signing in every industry. These independent studies show how common it is. The figures inside the demo are illustrative.</p></div><div class="ev-g">${ev.map(e => `<div class="ev"><b class="num">${e.big}</b><p>${e.t}</p><a href="${e.u}" target="_blank" rel="noopener">${e.s} ↗</a></div>`).join('')}</div></div>
-      <h3 class="h3">The solution, in five steps</h3>
+      <h3 class="h3">What the solution looks like</h3>
       <div class="tiles" id="tiles" role="tablist" aria-label="The five steps">${STEPS.map((x, i) => `<button class="tile${i === 0 ? ' on' : ''}" role="tab" aria-selected="${i === 0}" data-i="${i}"><span class="tb">${I[x.ico] || I.doc}</span>${x.name}<span class="dot"></span></button>`).join('')}</div>
       <div class="tilepanel" id="tilepanel"></div>
       <div class="note" style="margin-top:16px;max-width:860px"><b style="color:#fff">What it never does:</b> send anything to a supplier on its own. It reads, compares, explains and drafts. People decide.</div>
@@ -265,13 +265,11 @@ function renderStory() {
 
     <section class="sec" id="sec-right"><div class="story-wrap">
       ${secHead('sec-right', 'The proof', 'Have I built it right? What would say otherwise?', '')}
-      <div class="grid2" style="margin-top:8px">
-        <div class="stat"><div class="muted" style="font-size:12.5px">The one number I steer by</div><b style="font-size:26px;margin-top:4px;line-height:1.2">Money saved or won back, confirmed by Finance</b><p>Three stages, so nothing is counted early: <b style="color:#fff">found</b> (flagged), <b style="color:#fff">secured</b> (the contract allows it, or the supplier agreed in writing) and <b style="color:#fff">confirmed</b> (a credit note, refund or lower invoice is in the books). The headline is confirmed only.</p><a href="#working">See it live in the product ↗</a></div>
-        <div class="stat"><div class="muted" style="font-size:12.5px">How I'll know it works</div>
-          <div class="metric-row" style="border-top:0"><span>Flags acted on before the deadline</span><span class="muted">Aim</span><b class="num">70%+</b></div>
-          <div class="metric-row"><span>Flags a person says are right</span><span class="muted">Aim</span><b class="num">85%+</b></div>
-          <div class="metric-row"><span>Days from flag to action</span><span class="muted">Aim</span><b class="num">5 or fewer</b></div>
-          <div class="metric-row"><span>Found money that Finance confirms</span><span class="muted">Aim</span><b class="num">50%+</b></div>
+      <div class="grid2" style="margin-top:8px;align-items:stretch">
+        <div class="stat"><div class="muted" style="font-size:13px">The one number I steer by</div><b style="margin-top:6px">${MONEY(PORTFOLIO.confirmedSavings)}</b><p>Money saved or won back that Finance has confirmed this year. It is counted in three stages so nothing is counted early: found (flagged), secured (the contract allows it, or the supplier agreed in writing) and confirmed (a credit note, refund or lower invoice is in the books). Only confirmed money counts.</p><a href="#working">See it live in the product ↗</a></div>
+        <div class="stat"><div class="muted" style="font-size:13px">What I track, against what the demo shows</div>
+          <div class="metric-row" style="border-top:0;font-size:12.5px;color:var(--text-3)"><span>Metric</span><span>Target</span><span>Demo now</span></div>
+          ${[['Flags acted on before the deadline', '70%+', '78%'], ['Flags a person confirms are right', '85%+', '91%'], ['Days from flag to action (median)', '5 or fewer', '4'], ['Found money confirmed by Finance', '35%+', '38%'], ['Supplier disputes on notices', 'Under 15%', '6%']].map(m => `<div class="metric-row"><span>${m[0]}</span><span class="muted num">${m[1]}</span><b class="num" style="font-size:15px;font-weight:600">${m[2]}</b></div>`).join('')}
         </div>
       </div>
       <h3 class="h3">What would tell me I'm wrong</h3>
@@ -287,7 +285,7 @@ function renderStory() {
       <div class="roadmap">
         <div class="rm"><div class="rk">Now <span class="muted">this prototype</span></div><ul><li>Supplier contracts checked every morning against invoices and market rates</li><li>One overcharge and renewal walked through every person, including a supplier that doesn't reply</li><li>AskSirion by typing or voice, with live headlines</li><li>Live news, diesel and inflation feeds</li><li>Found, secured and confirmed kept apart</li></ul></div>
         <div class="rm"><div class="rk">Next <span class="muted">3 to 6 months</span></div><ul><li>Software contracts as an add-on, with usage from sign-in logs where a company allows it</li><li>Live supplier portal for replies and credit notes</li><li>Alerts in Teams, Slack and email</li><li>Next checks: billing above rate cards, price links like fuel, rises above a cap</li></ul></div>
-        <div class="rm"><div class="rk">Later <span class="muted">6 to 18 months</span></div><ul><li>Stop drift at the source: suggest price caps and price links during negotiation</li><li>Fair-price benchmarks across Sirion customers, kept anonymous</li><li>Routine claims run end to end, with one approval</li></ul></div>
+        <div class="rm"><div class="rk">Later <span class="muted">6 to 18 months</span></div><ul><li>AI helps in negotiation: proposes counter-offers, price caps and price links backed by market rates and past deals</li><li>Fair-price benchmarks across Sirion customers, kept anonymous</li><li>Routine claims run end to end, with one approval</li></ul></div>
       </div>
     </div></section>
 
@@ -357,7 +355,7 @@ function prioChart(el) {
   mkChart(el, {
     grid: { left: 48, right: 20, top: 20, bottom: 44 },
     tooltip: Object.assign({ formatter: p => `<b>${p.data[3]}</b><br>About ₹${p.data[1]} Cr a year` + (p.data[3].startsWith('Above') ? ' (estimate, not counted)' : '') }, tipStyle),
-    xAxis: { type: 'value', min: 0, max: 10, name: 'How reliably we can catch it', nameLocation: 'middle', nameGap: 26, nameTextStyle: { color: '#8FA3A7', fontFamily: 'Hanken Grotesk, system-ui, sans-serif' }, axisLabel: { show: false }, splitLine: axisStyle.splitLine, axisLine: axisStyle.axisLine },
+    xAxis: { type: 'value', min: 0, max: 10, name: 'How reliably it can be caught', nameLocation: 'middle', nameGap: 26, nameTextStyle: { color: '#8FA3A7', fontFamily: 'Hanken Grotesk, system-ui, sans-serif' }, axisLabel: { show: false }, splitLine: axisStyle.splitLine, axisLine: axisStyle.axisLine },
     yAxis: { type: 'value', min: 0, max: 3, axisLabel: { color: '#8FA3A7', formatter: v => '₹' + v + ' Cr' }, splitLine: axisStyle.splitLine },
     series: [{ type: 'scatter', data: pts.map(p => ({ value: [p[1], p[2], p[3], p[0]], symbolSize: p[3], itemStyle: { color: p[4], opacity: 0.85 } })),
       label: { show: true, position: 'right', formatter: p => p.data.value[3], color: '#E6EEEF', fontFamily: 'Hanken Grotesk, system-ui, sans-serif', fontSize: 11.5 },
@@ -1004,7 +1002,7 @@ const QA = [
     src: ['Invoices matched to contracts in Sirion'], act: [['Open Prime Staffing', 'c-prime']] },
   { k: ['saved', 'saving', 'confirmed', 'north'], q: 'How much have we saved this year?',
     say: () => 'So far this year ' + MONEY(S.confirmed).replace('₹', '').replace(' Cr', ' crore') + ' rupees is confirmed in the books. More is secured and waiting for invoices.',
-    html: () => `Finance has confirmed <b>${MONEY(S.confirmed)}</b> in the books this year, ${Math.round(S.confirmed / S.found() * 100)}% of what we've found. A further <b>${MONEY(S.secured - S.confirmed)}</b> is secured and waiting for invoices.`,
+    html: () => `Finance has confirmed <b>${MONEY(S.confirmed)}</b> in the books this year, ${Math.round(S.confirmed / S.found() * 100)}% of what is found. A further <b>${MONEY(S.secured - S.confirmed)}</b> is secured and waiting for invoices.`,
     src: ['Credit notes and purchase orders in Sirion'], act: [['Is it working?', 'working']] }
 ];
 function rowsList(list) { return `<div class="brief" style="margin-top:4px">${list.map(c => `<a href="#c-${c.id}"><span style="width:8px;height:8px;border-radius:50%;background:${c.mark === 'billed' ? '#E0517F' : c.mark === 'sla' ? '#C98BD3' : '#E0A33A'};flex:none"></span><span style="flex:1;min-width:0"><span style="display:block;font-weight:500">${c.supplier}</span><span class="muted" style="font-size:12px">${c.action.verb}</span></span><span class="num" style="font-size:12px">${MONEY(c.save.amount)}</span></a>`).join('')}</div>`; }
