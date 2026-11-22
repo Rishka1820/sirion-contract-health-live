@@ -7,6 +7,7 @@ function findDiesel(items) {
     /(?:₹|Rs\.?|INR)\s?(\d{2,3}\.\d{1,2})[^.]{0,40}?(?:per litre|\/litre|a litre)?[^.]{0,40}diesel/i
   ];
   for (const it of items) {
+    if (!/diesel/i.test(it.title)) continue;
     for (const re of res) {
       const m = it.title.match(re);
       if (m) { const v = parseFloat(m[1]); if (v > 70 && v < 120) return Object.assign({ value: v }, it); }
@@ -16,6 +17,7 @@ function findDiesel(items) {
 }
 function findPct(items) {
   for (const it of items) {
+    if (!/(retail|CPI|consumer price)[^.]{0,40}inflation|inflation[^.]{0,40}(CPI|retail)/i.test(it.title) || /(to average|forecast|expect|projected|may |likely|outlook)/i.test(it.title)) continue;
     const m = it.title.match(/(\d{1,2}(?:\.\d{1,2})?)\s?(?:%|per ?cent)/i);
     if (m) { const v = parseFloat(m[1]); if (v >= 0 && v < 20) return Object.assign({ value: v }, it); }
   }
@@ -24,7 +26,7 @@ function findPct(items) {
 
 module.exports = async (req, res) => {
   const [dieselNews, cpiNews, wb] = await Promise.allSettled([
-    googleNews('diesel price Mumbai today', { days: 7, max: 15 }),
+    googleNews('diesel price Mumbai per litre', { days: 7, max: 15 }),
     googleNews('India retail inflation CPI', { days: 45, max: 12 }),
     fetch('https://api.worldbank.org/v2/country/IN/indicator/FP.CPI.TOTL.ZG?format=json&per_page=6').then(r => r.json())
   ]);
@@ -38,7 +40,7 @@ module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 's-maxage=1800, stale-while-revalidate=3600');
   res.status(200).json({
     updated: new Date().toISOString(),
-    diesel: { price: findDiesel(dItems), latest: dItems[0] || null },
-    inflation: { monthly: findPct(cItems), latest: cItems[0] || null, annual }
+    diesel: { price: findDiesel(dItems), latest: dItems.find(x => /diesel/i.test(x.title)) || null },
+    inflation: { monthly: findPct(cItems), latest: cItems.find(x => /inflation/i.test(x.title)) || null, annual }
   });
 };
