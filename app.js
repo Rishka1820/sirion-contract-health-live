@@ -1075,7 +1075,7 @@ function refreshChat() { const l = $('#chatLog'); if (!l) return; l.innerHTML = 
 
 /* ---------------- voice demo ---------------- */
 let vTimers = [], vIdx = 0;
-function clearVoice() { vTimers.forEach(clearTimeout); vTimers = []; try { speechSynthesis.cancel(); } catch (e) {} }
+function clearVoice() { vTimers.forEach(clearTimeout); vTimers = []; try { speechSynthesis.cancel(); } catch (e) {} try { if (elAudio) elAudio.pause(); } catch (e) {} }
 function openVoice(startIdx, demo) {
   vIdx = startIdx || 0;
   const live = !demo && canListen();
@@ -1260,7 +1260,8 @@ const tfmt = (iso) => iso ? new Date(iso).toLocaleTimeString('en-IN', { hour: '2
 
 async function liveInit() {
   const get = (u) => fetch(u, { headers: { accept: 'application/json' } }).then(r => r.ok ? r.json() : Promise.reject(r.status));
-  const [n, m, a] = await Promise.allSettled([get('/api/news'), get('/api/market'), get('/api/ask')]);
+  const [n, m, a, t] = await Promise.allSettled([get('/api/news'), get('/api/market'), get('/api/ask'), get('/api/tts')]);
+  LIVE.voice = t.status === 'fulfilled' && !!t.value.ready;
   if (n.status === 'fulfilled') { LIVE.news = n.value; const c = n.value.topics.reduce((s, t) => s + t.items.length, 0); SirionAPI.live('GET', 'news.google.com/rss (India)', c + ' headlines across 6 supplier types'); }
   if (m.status === 'fulfilled') {
     LIVE.market = m.value;
@@ -1386,7 +1387,8 @@ function liveAnswerHTML(m) {
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 const canListen = () => !!SR && window.isSecureContext;
 let rec = null;
-function speak(said, onWord, onEnd) {
+let elAudio = null;
+function speakBrowser(said, onWord, onEnd) {
   try {
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(said); u.rate = 1.02;
@@ -1395,6 +1397,19 @@ function speak(said, onWord, onEnd) {
     u.onend = onEnd; u.onerror = onEnd;
     speechSynthesis.speak(u); return true;
   } catch (e) { return false; }
+}
+function speak(said, onWord, onEnd) {
+  try { if (elAudio) { elAudio.pause(); elAudio = null; } } catch (e) {}
+  if (!(LIVE && LIVE.voice)) return speakBrowser(said, onWord, onEnd);
+  fetch('/api/tts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: said }) })
+    .then(r => { if (!r.ok) throw new Error('tts'); return r.blob(); })
+    .then(b => {
+      const a = new Audio(URL.createObjectURL(b)); elAudio = a;
+      a.ontimeupdate = () => { if (a.duration) onWord(Math.floor(said.length * a.currentTime / a.duration)); };
+      a.onended = onEnd; a.onerror = onEnd; a.play().catch(() => speakBrowser(said, onWord, onEnd));
+    })
+    .catch(() => speakBrowser(said, onWord, onEnd));
+  return true;
 }
 function liveListen() {
   const st = $('#vState'), wv = $('#vWave'), q = $('#vQ'), a = $('#vA'), orb = $('#vorb'), src = $('#vSrc');
