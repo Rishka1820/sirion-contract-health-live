@@ -201,7 +201,7 @@ function renderStory() {
       <div class="sec-num">Start here</div>
       <h2>Why read, when you can see!</h2>
       <p class="body">A two-minute tour of the product, with voiceover.</p>
-      <div class="videobox"><video id="walkVideo" src="walkthrough.mp4" poster="poster.jpg" controls playsinline preload="metadata" aria-label="Two-minute walkthrough of Contract health"></video></div>
+      <div class="videobox"><video id="walkVideo" src="walkthrough.mp4?v=2" poster="poster.jpg?v=2" controls playsinline preload="metadata" aria-label="Two-minute walkthrough of Contract health"></video></div>
       <p class="muted" style="font-size:13px;margin-top:10px">Prefer to drive? <a href="#walkthrough">Play the same tour live inside the product</a>, or <a href="#signin">open it and click around</a>.</p>
     </div></section>
 
@@ -625,6 +625,7 @@ function renderOverview() {
       </tbody></table></div>
       <div style="display:flex;gap:16px;padding:10px 18px;font-size:12px;background:rgba(255,255,255,0.02)" class="muted"><span>Showing ${rows.length} of 69. Only these are built in the demo; the rest work the same way.</span></div>
     </section>
+    ${marketWatch()}
     <details id="more" class="more" ${S.openMore ? 'open' : ''}><summary>Trends and market prices</summary>
     <section class="row2">
       <figure class="card" id="chart-card" style="margin:0;padding:16px 18px 8px">
@@ -638,7 +639,6 @@ function renderOverview() {
       </div>
     </section>
 
-    ${marketWatch()}
     </details>
     <p class="muted" style="margin:18px 0 0;font-size:12px">Contracts, suppliers and money figures are illustrative. Market watch, diesel and inflation are live, fetched when this page opens. Contract terms read by Sirion's Extraction Agent; invoices from SAP S/4HANA.</p>
   </main>`;
