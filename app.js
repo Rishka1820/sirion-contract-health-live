@@ -51,7 +51,7 @@ const S = {
   found: () => PORTFOLIO.foundSoFar,
   seats: 1300, proposedRise: 3, agreedRise: null, reply: null, letter: null, zvConfirmed: false,
   heroSeen: store.get('heroSeen', true),
-  banner: true,
+  banner: false,
   filterCat: null,
   tab: 'month',
   chartMode: 'month',
@@ -498,13 +498,14 @@ function shell(active, centerHTML) {
         <button id="navTour">${I.help}Take the tour</button>
         <a href="#walkthrough">${I.play}Play walkthrough</a>
       </nav>
-      <div style="display:flex;align-items:center;gap:10px;padding:12px 8px 4px;border-top:1px solid rgba(180,205,208,0.10)"><span class="av" style="width:30px;height:30px;background:${p.color}">${p.initials}</span><div style="line-height:1.2"><div style="font-size:13px">${p.name}</div><div style="font-size:11.5px;color:var(--text-3)">${p.name.toLowerCase().replace(/[^a-z ]/g, '').trim().replace(/ +/g, '.')}@company.com</div></div></div>
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 8px 4px;border-top:1px solid rgba(180,205,208,0.10)"><span class="av" style="width:30px;height:30px;background:${p.color}">${p.initials}</span><div style="line-height:1.2"><div style="font-size:13px">${p.name}</div><div style="font-size:11.5px;color:var(--text-3)">${p.name.toLowerCase().replace(/[^a-z ]/g, '').trim().split(' ')[0]}@company.com</div></div></div>
     </aside>
     <div class="center">
       ${active === 'overview' && S.heroSeen && S.banner ? annc() : ''}
       <header class="topbar">
         <label class="search">${I.search}<span class="sr">Search contracts</span><input type="search" placeholder="Search contracts and suppliers" id="searchBox"></label>
-        <button class="btn outline" id="topTour" style="margin-left:auto;height:34px">Take the tour</button>
+        <button class="btn primary" id="topAsk" style="margin-left:auto;height:34px">Ask Sirion</button>
+        <button class="btn outline" id="topTour" style="margin-left:8px;height:34px">Take the tour</button>
         <div class="viewas" style="margin-left:12px"><button id="viewAsBtn" class="acct" aria-haspopup="menu" aria-expanded="${S.menu}" aria-label="Account: ${p.name}" title="${p.name}"><span class="av" style="background:${p.color};width:32px;height:32px">${p.initials}</span></button>${S.menu ? viewAsMenu() : ''}</div>
       </header>
       ${centerHTML}
@@ -599,7 +600,7 @@ function renderOverview() {
     ${!S.heroSeen ? launchHero() : ''}
     ${inboxCard()}
     <div class="page-head"><div><h1>Overview</h1><div class="muted" style="font-size:13px;margin-top:2px">How your 2,500 supplier contracts compare with invoices and today's market prices. Checked at 9:00 this morning.</div></div>
-      <div style="margin-left:auto;display:flex;gap:8px"><button class="btn ghost" id="exportBtn">Export</button></div></div>
+      </div>
 
     <section class="card metrics" id="nums" aria-label="Key numbers">
       <div><div class="muted" style="font-size:12.5px">Extra you paid this month</div><div class="big num">${MONEY(PORTFOLIO.extraThisMonth)}</div><div class="foot num" style="color:var(--rose-t)">↑ ${MONEY(PORTFOLIO.extraThisMonth - PORTFOLIO.extraLastMonth)} <span class="muted">more than October</span></div></div>
@@ -652,7 +653,6 @@ function renderOverview() {
   $$('[data-tab]').forEach(b => b.onclick = () => { S.tab = b.dataset.tab; renderApp(); });
   const cc = $('#clearCat'); if (cc) cc.onclick = (e) => { e.stopPropagation(); S.filterCat = null; renderApp(); };
   $$('tr[data-go]').forEach(tr => { tr.onclick = (e) => { if (e.target.closest('a')) return; go(tr.dataset.go); }; tr.onkeydown = (e) => { if (e.key === 'Enter') go(tr.dataset.go); }; });
-  $('#exportBtn').onclick = () => toast('Export is not part of this demo.');
   const hc = $('#heroClose'), hg = $('#heroGo'), ht = $('#heroTour');
   const hideHero = () => { S.heroSeen = true; store.set('heroSeen', true); renderApp(); };
   if (hc) hc.onclick = hideHero; if (hg) hg.onclick = hideHero;
@@ -1221,6 +1221,7 @@ function wireShell() {
   wireRoleSet();
   const va = $('#viewAsBtn'); if (va) va.onclick = (e) => { e.stopPropagation(); S.menu = !S.menu; disposeCharts(); renderApp(); };
   $$('.menu [data-role]').forEach(b => b.onclick = () => { S.role = b.dataset.role; S.menu = false; toast('Now viewing as ' + PEOPLE[S.role].name + '.'); if (S.role === 'supplier') return renderSupplier(); disposeCharts(); renderApp(); });
+  const ta = $('#topAsk'); if (ta) ta.onclick = () => { S.askOpen = true; renderApp(); };
   const tt = $('#topTour'); if (tt) tt.onclick = () => startTour();
   const nt = $('#navTour'), nn = $('#navNew');
   if (nt) nt.onclick = () => startTour();
